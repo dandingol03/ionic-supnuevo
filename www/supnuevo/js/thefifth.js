@@ -1,5 +1,5 @@
-   angular.module('app')
-  .controller('queryController',function($scope,$state,$http,$cordovaProgress,$ionicPlatform,locals,rmiPath,$ionicModal){
+angular.module('app')
+  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$cordovaNetwork,locals,rmiPath,$ionicModal){
     $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.selectedCode = {codeNum:''};
     //$scope.updatePrice = new Object();
@@ -24,82 +24,12 @@
       animation: 'slide-in-up'
     });
     $scope.queryGoodsCode = function(){
-      var code = $scope.goods.codeNum;
-      if(code !== null && code !== undefined && code !== "" &&　code.length === 4){
-        $scope.taxMark = 0;
-        $scope.amount = 0;
-        $scope.barCodes = [];
-        $scope.selectedCodeInfo = {
-          priceId: '',
-          price: '',
-          oldPrice: '',
-          priceShow: '',
-          price1: '',
-          nombre: '',
-          codigo: '',
-          iva: '',
-          printType: ''
-        };
-        $scope.printType = {type1: '0', type2: '0', type3: '0', type4: '0'};
-        $scope.taxMark = 0;
-        $scope.class = {
-          class1: 'button button-block button-stable',
-          class2: 'button button-block button-stable',
-          class3: 'button button-block button-stable',
-          class4: 'button button-block button-stable'
-        }
-        $cordovaProgress.show();
-        $http({
-          method:"post",
-          params:{
-            codigo:code,
-            merchantId:$scope.user.supnuevoMerchantId
-          },
-          url:rmiPath+"/supnuevo/supnuevoGetQueryDataListByInputStringBs.do",
-          error:function(err){
 
-          },
-        }).success(function(response){
-          cordova.plugins.Keyboard.close();
-          $scope.goods.codeNum = '';
-          if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
-            $cordovaProgress.hide();
-            alert(response.errorMessage);
-            $state.go("login");
-          }else{
-          if(response.message === undefined || response.message === null || response.message ===""){
-          var array = new Array();
-          response.array.map(function(index,i){
-            array.push(index);
-          });
-          $scope.barCodes = [];
-          for(var i = 0 ; i < array.length;i++){
-            var o = {value:'',label:''};
-            o.label = array[i].commodityId;
-            o.value = array[i].codigo;
-            $scope.barCodes.push(o);
-          }
-          $cordovaProgress.hide();
-          $scope.codeNumModal.show();
-          }else{
-            alert(response.message);
-            $cordovaProgress.hide();
-          }
-        }
-        }).error(function(err){
-          alert(err.toSource());
-          $cordovaProgress.show({
-            template:'connect the server timeout',
-            duration:'2000'
-          });
-        })
-
-      }
 
 
     }
     $scope.func = function(codeNum){
-     // var codigo = $scope.selectedCode[codeNum]
+      // var codigo = $scope.selectedCode[codeNum]
       var supnuevoMerchantId =  $scope.user.supnuevoMerchantId;
       var codigo = codeNum;
       $scope.selectedCode.codeNum = codeNum;
@@ -193,17 +123,17 @@
       $scope.selectedCodeInfo.priceShow = "";
     }
     $scope.addGoods=function(){
-        $http({
-          method:"post",
-          params:{
-            merchantId:$scope.user.supnuevoMerchantId
-          },
-          url:rmiPath+"/supnuevo/supnuevoGetSupnuevoCommodityTaxInfoListMobile.do",
-        }).success(function(response){
-          if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
-            alert(response.errorMessage);
-            $state.go("login");
-          }else{
+      $http({
+        method:"post",
+        params:{
+          merchantId:$scope.user.supnuevoMerchantId
+        },
+        url:rmiPath+"/supnuevo/supnuevoGetSupnuevoCommodityTaxInfoListMobile.do",
+      }).success(function(response){
+        if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
+          alert(response.errorMessage);
+          $state.go("login");
+        }else{
           var taxArr = new Array();
           var sizeArr = new Array();
           response.taxArr.map(function(index,i){
@@ -212,12 +142,12 @@
           response.sizeArr.map(function(index,i){
             sizeArr.push(index);
           })
-            for(var i = 0 ; i < taxArr.length;i++){
-              var o = {'value':'','label':''};
-              o.label = taxArr[i].label;
-              o.value = taxArr[i].value;
-              $scope.tax.push(o);
-            }
+          for(var i = 0 ; i < taxArr.length;i++){
+            var o = {'value':'','label':''};
+            o.label = taxArr[i].label;
+            o.value = taxArr[i].value;
+            $scope.tax.push(o);
+          }
           for(var i = 0 ; i < sizeArr.length;i++){
             var o = {'value':'','label':''};
             o.label = sizeArr[i].label;
@@ -226,27 +156,27 @@
           }
           //alert(JSON.stringify($scope.sizeArr));
           $state.go("addGoods",{taxName:JSON.stringify($scope.tax),sizeArr:JSON.stringify($scope.sizeArr)});
-          }
-        }).error(function(){
+        }
+      }).error(function(){
 
-        })
+      })
 
     }
     $scope.addIVA = function(){
-        if($scope.taxMark >= 0){
-          $scope.taxMark = 1;
-        }else if($scope.taxMark < 0){
-          $scope.taxMark = 0;
-        }
-        $scope.selectedCodeInfo.price = (Math.round($scope.selectedCodeInfo.price1 * (1 + $scope.taxMark * $scope.selectedCodeInfo.iva)*(1 + $scope.amount) *100))/100;
-        $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
+      if($scope.taxMark >= 0){
+        $scope.taxMark = 1;
+      }else if($scope.taxMark < 0){
+        $scope.taxMark = 0;
+      }
+      $scope.selectedCodeInfo.price = (Math.round($scope.selectedCodeInfo.price1 * (1 + $scope.taxMark * $scope.selectedCodeInfo.iva)*(1 + $scope.amount) *100))/100;
+      $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
 
 
     }
     $scope.addPercentage1=function(){
-        $scope.amount =  $scope.amount + 0.1;
-        $scope.selectedCodeInfo.price = (Math.round($scope.selectedCodeInfo.price1 * (1 + $scope.taxMark * $scope.selectedCodeInfo.iva)*(1 + $scope.amount) *100))/100;
-        $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
+      $scope.amount =  $scope.amount + 0.1;
+      $scope.selectedCodeInfo.price = (Math.round($scope.selectedCodeInfo.price1 * (1 + $scope.taxMark * $scope.selectedCodeInfo.iva)*(1 + $scope.amount) *100))/100;
+      $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
     }
     $scope.addPercentage2=function(){
       $scope.amount =  $scope.amount + 0.05;
@@ -263,8 +193,8 @@
       }else if($scope.taxMark > 0){
         $scope.taxMark = 0;
       }
-        $scope.selectedCodeInfo.price = Math.round($scope.selectedCodeInfo.price1 * (1 +  $scope.taxMark*$scope.selectedCodeInfo.iva)*(1 + $scope.amount)*100)/100;
-        $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
+      $scope.selectedCodeInfo.price = Math.round($scope.selectedCodeInfo.price1 * (1 +  $scope.taxMark*$scope.selectedCodeInfo.iva)*(1 + $scope.amount)*100)/100;
+      $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
     }
     $scope.reducePercentage1=function(){
       $scope.amount =  $scope.amount - 0.1;
@@ -274,7 +204,7 @@
     $scope.reducePercentage2=function(){
       $scope.amount =  $scope.amount - 0.05;
       $scope.selectedCodeInfo.price = (Math.round($scope.selectedCodeInfo.price1 * (1 + $scope.taxMark * $scope.selectedCodeInfo.iva)*(1 + $scope.amount) *100))/100;
-        $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
+      $scope.selectedCodeInfo.priceShow = $scope.selectedCodeInfo.price;
 
     }
     $scope.zero1=function(){
