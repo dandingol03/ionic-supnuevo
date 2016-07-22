@@ -1,7 +1,11 @@
 angular.module('app')
   .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$ionicModal) {
     $scope.barCodes = new Array();
+    $scope.selectedCode = {codeNum:''};
     $scope.goods={};
+    $scope.products={"campus1":{"college11":["major111","major112","major113"],"college12":["major121","major122","major123"]},
+                     "campus2":{"college21":["major211","major212","major213"],"college22":["major221","major222","major223"]}
+    }
     //初始化模态框
     $ionicModal.fromTemplateUrl('codeNum.html', {
            scope: $scope,
@@ -9,10 +13,6 @@ angular.module('app')
        }).then(function(modal) {
          $scope.barcodeModal = modal;
        });
-
-
-
-
     $scope.queryGoodsCode=function()
     {  var code=$scope.goods.codeNum;
       if(code!==null&&code.length==4) {
@@ -32,6 +32,16 @@ angular.module('app')
     $scope.$on('$destroy', function() {
       $scope.barcodeModal.remove();
     });
+    $scope.func=function(codeNum){
+      $scope.selectedCode.codeNum=codeNum;
+      $scope.barcodeModal.hide();
+    };
 
   })
+
+
+
+
+
+
 
