@@ -29,7 +29,11 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-x-toast",
     "ionic-plugin-keyboard",
-    "cordova-plugin-keyboard"
+    "cordova-plugin-keyboard",
+    "cordova-plugin-progressindicator"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "android",
+    "ios"
+  ]
 }
