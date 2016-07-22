@@ -23,6 +23,9 @@
       scope: $scope,
       animation: 'slide-in-up'
     });
+
+
+
     $scope.queryGoodsCode = function(){
       var code = $scope.goods.codeNum;
       if(code !== null && code !== undefined && code !== "" &&　code.length === 4){
@@ -48,7 +51,7 @@
           class3: 'button button-block button-stable',
           class4: 'button button-block button-stable'
         }
-        $cordovaProgress.show();
+            //$cordovaProgress.show('qq');
         $http({
           method:"post",
           params:{
