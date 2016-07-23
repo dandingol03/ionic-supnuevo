@@ -39,7 +39,7 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
             controller: 'addGoodsController',
             templateUrl:'supnuevo/html/addGoods.html'
         });
-       $stateProvider.state('thefifth',{
+         $stateProvider.state('thefifth',{
            url:'/thefifth',
            controller:'theFifthController',
            templateUrl:'supnuevo/html/thefifth.html'
