@@ -1,10 +1,16 @@
 angular.module('app')
   .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$ionicModal) {
     $scope.catalogArrFirsts="";
-    $scope.catalogSeconds="";
-    $scope.catalogThirds="";
+    $scope.catalogArrSeconds="";
+    $scope.catalogArrThirds="";
+    $scope.catalogFirst="";
+    $scope.catalogSecond="";
+    $scope.catalogThird="";
     $scope.taxArrFirsts="";
-    $scope.sizeUnitArr="";
+    $scope.taxArrSeconds="";
+    $scope.taxFirst="";
+    $scope.taxSecond="";
+    $scope.sizeUnitArrs="";
 
 
     $http.get("/proxy/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''")
@@ -34,7 +40,7 @@ angular.module('app')
            var o={value:'',label:''};
             o.label=sizeUnitArr[i].label;
             o.value=sizeUnitArr[i].value;
-            $scope.sizeUnitArr.push(o);
+            $scope.sizeUnitArrs.push(o);
           }
         }
       })
@@ -65,12 +71,12 @@ angular.module('app')
         $scope.barcodeModal.show();
       }
     }
-    $scope.getInfo=function()
+    $scope.getcatalogSecondInfo=function()
     {
       $http({
         method:"post",
         params:{
-          parentId:""
+          parentId:$scope.catalogFirst
         },
         url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
         error:function(err){
@@ -90,7 +96,7 @@ angular.module('app')
               var o = {value:'',label:''};
               o.label = array[i].label;
               o.value = array[i].value;
-              $scope.first.push(o);
+              $scope.catalogArrSeconds.push(o);
             }
             $cordovaProgress.hide();
           }else{
@@ -105,9 +111,48 @@ angular.module('app')
           duration:'2000'
         });
       })
-
-
     }
+    $scope.gecatalogThirdInfo=function()
+    {
+      $http({
+        method:"post",
+        params:{
+          parentId:$scope.catalogSecond
+        },
+        url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
+        error:function(err){
+
+        },
+      }).success(function(response){
+        if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
+          $cordovaProgress.hide();
+          alert(response.errorMessage);
+          $state.go("login");
+        }else{
+          if(response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !==""){
+            var catalogArr = new Array();
+            for(var i = 0 ; i < array.length;i++){
+              var o = {value:'',label:''};
+              o.label = array[i].label;
+              o.value = array[i].value;
+              $scope.catalogArrThirds.push(o);
+            }
+            $cordovaProgress.hide();
+          }else{
+            alert(response.message);
+            $cordovaProgress.hide();
+          }
+        }
+      }).error(function(err){
+        alert(err.toSource());
+        $cordovaProgress.show({
+          template:'connect the server timeout',
+          duration:'2000'
+        });
+      })
+    }
+
+
 
     $scope.$on('$destroy', function() {
       $scope.barcodeModal.remove();
