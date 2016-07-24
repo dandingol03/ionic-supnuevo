@@ -5,6 +5,10 @@
         {
           "path":"/serviceHall",
            "proxyUrl": "http://localhost:8090/serviceHall/"
+        },
+        {
+          "path":"/proxy",
+          "proxyUrl":"http://192.168.1.105:8080/supnuevo/"
         }
       ]
 }
