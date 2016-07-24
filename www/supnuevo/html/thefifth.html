@@ -22,9 +22,6 @@
         </select>
       </label>
     </div>
-
-
-    <div class="list">
       <div class="list">
         <label class="item item-input item-select">
           <div class="input-label">
@@ -34,6 +31,7 @@
                   ng-options="ob.label for ob in catalogArrFirsts"  ng-change="getcatalogSecondInfo()" >
           </select>
         </label>
+        </div>
       </div>
       <div class="list" >
         <label class="item item-input item-select" >
@@ -55,7 +53,7 @@
           </select>
         </label>
       </div>
-    </div>
+
 
 
 
@@ -115,13 +113,12 @@
   </ion-content>
 
 
-
   <script id="codeNum.html" type="text/ng-template">
     <div class = "modal">
       <ion-content>
         <ion-list>
-          <ion-item ng-repeat="code in barCodes track by $index" ng-click="func(code.value)">
-            {{code.value}}
+          <ion-item ng-repeat="code in barCodes track by $index" ng-click="func(code.codigo)">
+            {{code.codigo}}
           </ion-item>
         </ion-list>
       </ion-content>

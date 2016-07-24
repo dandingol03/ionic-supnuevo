@@ -83,22 +83,47 @@ angular.module('app')
        }).then(function(modal) {
          $scope.barcodeModal = modal;
        });
-    $scope.queryGoodsCode=function()
-    {  var code=$scope.goods.codeNum;
-      if(code!==null&&code.length==4) {
+    $scope.queryGoodsCode=function() {
+      var code = $scope.goods.codeNum;
+      if (code !== null && code.length == 4) {
         $scope.barCodes = [];
-        var o = {value: '', label: ''};
-        o.label = 1;
-        o.value = '00000000';
-        $scope.barCodes.push(o);
-        o.label = 2;
-        o.value = '01010101';
-        $scope.barCodes.push(o);
-        $scope.barcodeModal.show();
+        $http({
+          method: "post",
+          params: {
+            input: $scope.goods.codeNum
+          },
+          url: "/proxy/supnuevo/getQueryDataListByInputStringIonic.do",
+          error: function (err) {
+          },
+        }).success(function (response) {
+          if (response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== "") {
+            $cordovaProgress.hide();
+            alert(response.errorMessage);
+            $state.go("login");
+          } else {
+            if (response.tmplist !== undefined || response.tmplist !== null || response.tmplist !== "") {
+              var list = response.tmplist;
+              for (var i = 0; i < list.length; i++) {
+                var o = {commodityId: '', codigo: ''};
+                o.commodityId = list[i].commodityId;
+                o.codigo = list[i].codigo;
+                $scope.barCodes.push(o);
+              }
+              $scope.barcodeModal.show();
+            } else {
+              alert(response.message);
+
+            }
+          }
+        }).error(function (err) {
+          alert(err.toSource());
+          $cordovaProgress.show({
+            template: 'connect the server timeout',
+            duration: '2000'
+          });
+        })
       }
     }
-
-
     $scope.selectChange=function(){
       var fi=$scope.catalogFirst;
       console.log('fi=' + fi);
@@ -112,7 +137,7 @@ angular.module('app')
         params:{
           parentId:$scope.catalogFirst
         },
-        url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
+        url:"/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
         error:function(err){
 
         },
@@ -195,6 +220,8 @@ angular.module('app')
     $scope.func=function(codeNum){
       $scope.selectedCode.codeNum=codeNum;
       $scope.barcodeModal.hide();
+
+
     };
 
   });
