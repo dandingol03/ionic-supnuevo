@@ -1,19 +1,11 @@
 angular.module('app')
-  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$ionicModal) {
+  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal) {
     $scope.catalogArrFirsts=new Array;
     $scope.catalogArrSeconds=new Array;
     $scope.catalogArrThirds=new Array;
-    $scope.catalogFirst={};
-    $scope.catalogSecond="";
-    $scope.catalogThird="";
-    $scope.sizeValueArray =new Array;
-    $scope.sizeValue="";
     $scope.sizeUnitArray=new Array;
-    $scope.sizeUnit="";
-    $scope.taxArrs=new Array;
-    $scope.tax="";
-
-
+    $scope.scaleArray =new Array;
+    $scope.taxArray=new Array;
     $scope.selected={};
 
 
@@ -39,50 +31,60 @@ angular.module('app')
       console.log('..');
     }
 
-    //$http.get("/proxy/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''")
-    //  .success(function(response) {
-    //    if (response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !== "") {
-    //      var catalogArr = response.catalogArr;
-    //      for (var i = 0; i < catalogArr.length; i++) {
-    //        var o =new Object();
-    //        o.label = catalogArr[i].label;
-    //        o.value = catalogArr[i].value;
-    //        $scope.catalogArrFirsts.push(o);
-    //      }
-    //    };
-    //    if(response.taxArr!==undefined||response.taxArr!==null||response.taxArr!==""){
-    //      var taxArr=response.taxArr;
-    //      for (var i=0;i<taxArr.length;i++){
-    //        var o={value:'',label:''};
-    //        o.label=taxArr[i].label;
-    //        o.value=taxArr[i].value;
-    //        $scope.taxArrs.push(o);
-    //      }
-    //
-    //    };
-    //    if(response.sizeUnitArr!==undefined||response.sizeUnitArr!==null||response.sizeUnitArr!==""){
-    //      var sizeUnitArr=response.sizeUnitArr;
-    //      for(i=0;i<sizeUnitArr.length;i++){
-    //       var o={value:'',label:''};
-    //        o.label=sizeUnitArr[i].label;
-    //        o.value=sizeUnitArr[i].value;
-    //        $scope.sizeUnitArrs.push(o);
-    //      }
-    //    }
-    //  })
-    //  .error(function(){
-    //    alert("error");
-    //  });
+    $http.get("/proxy/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''")
+      .success(function(response) {
+        if (response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !== "") {
+          var catalogArr = response.catalogArr;
+          for (var i = 0; i < catalogArr.length; i++) {
+            var o =new Object();
+            o.label = catalogArr[i].label;
+            o.value = catalogArr[i].value;
+            $scope.catalogArrFirsts.push(o);
+          }
+        };
+        if(response.taxArr!==undefined||response.taxArr!==null||response.taxArr!==""){
+          var taxArr=response.taxArr;
+          for (var i=0;i<taxArr.length;i++){
+            var o={value:'',label:''};
+            o.label=taxArr[i].label;
+            o.value=taxArr[i].value;
+            $scope.taxArray.push(o);
+          }
+        };
+        if(response.sizeUnitArr!==undefined||response.sizeUnitArr!==null||response.sizeUnitArr!==""){
+          var sizeUnitArr=response.sizeUnitArr;
+          for(i=0;i<sizeUnitArr.length;i++){
+            var o={value:'',label:''};
+            o.label=sizeUnitArr[i].label;
+            o.value=sizeUnitArr[i].value;
+            $scope.sizeUnitArray.push(o);
+          }
+        }
+      })
+      .error(function(){
+        alert("error");
+      });
     $scope.barCodes = new Array();
-    $scope.selectedCode = {codeNum:''};
+    $scope.selectedCode = {codeNum:'',commodityId:''};
     $scope.goods={};
     //初始化模态框
     $ionicModal.fromTemplateUrl('codeNum.html', {
-           scope: $scope,
-           animation: 'slide-in-up'
-       }).then(function(modal) {
-         $scope.barcodeModal = modal;
-       });
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.barcodeModal = modal;
+    });
+
+    $ionicModal.fromTemplateUrl('edit.html', {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.editModal = modal;
+    });
+
+
+
+
     $scope.queryGoodsCode=function() {
       var code = $scope.goods.codeNum;
       if (code !== null && code.length == 4) {
@@ -97,7 +99,7 @@ angular.module('app')
           },
         }).success(function (response) {
           if (response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== "") {
-            $cordovaProgress.hide();
+
             alert(response.errorMessage);
             $state.go("login");
           } else {
@@ -117,10 +119,7 @@ angular.module('app')
           }
         }).error(function (err) {
           alert(err.toSource());
-          $cordovaProgress.show({
-            template: 'connect the server timeout',
-            duration: '2000'
-          });
+
         })
       }
     }
@@ -131,53 +130,47 @@ angular.module('app')
 
     $scope.getcatalogSecondInfo=function()
     {
-      console.log('id of ob='+ob.id);
+      //  console.log('id of ob='+ob.id);
       $http({
         method:"post",
         params:{
-          parentId:$scope.catalogFirst
+          parentId:$scope.selected.catalogFirst.value
         },
-        url:"/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
-        error:function(err){
-
-        },
+        url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do"
       }).success(function(response){
         if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
-          $cordovaProgress.hide();
+
           alert(response.errorMessage);
           $state.go("login");
         }else{
           if(response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !==""){
-            var catalogArr = new Array();
-            for(var i = 0 ; i < array.length;i++){
+            var arr = response.catalogArr;
+            for(var i = 0 ; i < arr.length;i++){
               var o = {value:'',label:''};
-              o.label = array[i].label;
-              o.value = array[i].value;
+              o.label = arr[i].label;
+              o.value = arr[i].value;
               $scope.catalogArrSeconds.push(o);
             }
-            $cordovaProgress.hide();
+
           }else{
             alert(response.message);
-            $cordovaProgress.hide();
+
           }
         }
       }).error(function(err){
         alert(err.toSource());
-        $cordovaProgress.show({
-          template:'connect the server timeout',
-          duration:'2000'
-        });
+
       })
     }
 
 
 
-    $scope.gecatalogThirdInfo=function()
+    $scope.getcatalogThirdInfo=function()
     {
       $http({
         method:"post",
         params:{
-          parentId:$scope.catalogSecond
+          parentId:$scope.selected.catalogSecond.value
         },
         url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
         error:function(err){
@@ -185,44 +178,92 @@ angular.module('app')
         },
       }).success(function(response){
         if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
-          $cordovaProgress.hide();
+
           alert(response.errorMessage);
           $state.go("login");
         }else{
           if(response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !==""){
-            var catalogArr = new Array();
-            for(var i = 0 ; i < array.length;i++){
-              var o = {value:'',label:''};
-              o.label = array[i].label;
-              o.value = array[i].value;
+            var catalogArr = response.catalogArr;
+            for(var i = 0 ; i < catalogArr.length;i++){
+              var o = catalogArr[i];
               $scope.catalogArrThirds.push(o);
             }
-            $cordovaProgress.hide();
+
           }else{
             alert(response.message);
-            $cordovaProgress.hide();
+
           }
         }
       }).error(function(err){
         alert(err.toSource());
-        $cordovaProgress.show({
-          template:'connect the server timeout',
-          duration:'2000'
-        });
+
+      })
+    }
+    $scope.getScaleValueArrs=function(){
+
+      $http({
+        method:"post",
+        params:{
+          sizeUnit:$scope.selected.sizeUnit.value
+        },
+        url:"/proxy/supnuevo/supnuevoGetSupnuevoScaleInfoListMobile.do",
+        error:function(err){
+
+        },
+      }).success(function(response){
+        if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
+          alert(response.errorMessage);
+          $state.go("login");
+        }else{
+          if(response.scaleArr !== undefined || response.scaleArr !== null || response.scaleArr !==""){
+            var scaleArr = response.scaleArr;
+            for(var i = 0 ; i < scaleArr.length;i++){
+              var o = scaleArr[i];
+              $scope.scaleArray.push(o);
+            }
+          }else{
+            alert(response.message);
+          }
+        }
+      }).error(function(err){
+        alert(err.toSource());
       })
     }
 
 
-
     $scope.$on('$destroy', function() {
       $scope.barcodeModal.remove();
+      $scope.editModal.remove();
     });
+
+
     $scope.func=function(codeNum){
-      $scope.selectedCode.codeNum=codeNum;
+
       $scope.barcodeModal.hide();
+      $http({
+        method: "post",
+        params: {
+          commodityId: codeNum
+        },
+        url: "/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityFormByCommodityIdMobile.do"
+      }).success(function (response) {
+        if (response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== "") {
+          alert(response.errorMessage);
+          $state.go("login");
+        } else {
+          if (response.object !== undefined || response.object !== null || response.object !== "") {
+            var obj=response;
+            $scope.nombre=obj.nombre;
+            $scope.sizeValue=obj.sizeValue;
+            sizeUnit
 
+          }
+        }
+      }).error(function (err) {
+        alert("error");
+      })
+    }
 
-    };
 
   });
 
