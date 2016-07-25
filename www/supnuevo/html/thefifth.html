@@ -5,27 +5,18 @@
     </ion-nav-title>
   </ion-nav-bar>
   <ion-content class="padding" onscroll="false">
+    <div class="list">
     <label class="item item-input">
       <span>请输入四位条码 codigo</span>
       <input type="tel" ng-model="goods.codeNum" maxlength="4" ng-change="queryGoodsCode()" >
       <i class="icon ion-close-circled" style="font-size:30px" on-tap="doClearGoodCode()" ng-if="goods.codeNum"></i>
     </label>
-
-
+      </div>
 
     <div class="list">
       <label class="item item-input item-select">
         <div class="input-label">
-          yifu
-        </div>
-        <select ng-model="selected.product" ng-options="m.productName  for m in model" ng-change="getSelected()">
-        </select>
-      </label>
-    </div>
-    <div class="list">
-      <label class="item item-input item-select">
-        <div class="input-label">
-          商品类
+          商品类rubroId
         </div>
         <select style="font-size: 16px" ng-model="selected.catalogFirst"
                 ng-options="ob.label for ob in catalogArrFirsts"  ng-change="getcatalogSecondInfo()" >
@@ -36,7 +27,7 @@
     <div class="list" >
       <label class="item item-input item-select" >
         <div class="input-label">
-          商品品牌
+          商品品牌marcaId
         </div>
         <select style="font-size: 16px" ng-options="ob.label for ob  in catalogArrSeconds"
                 ng-model="selected.catalogSecond"   ng-change="getcatalogThirdInfo()">
@@ -53,28 +44,35 @@
         </select>
       </label>
     </div>
-
+    <div class="list">
+      <div class="list">
     <label class="item item-input">
       <span class="input-label">商品名称nombre</span>
       <input type="text" ng-model="nombre">
     </label>
+        </div>
+      <div class="list">
     <label class="item item-input">
       <span class="input-label">含量数值sizeValue</span>
       <input type="text" ng-model="sizeValue">
     </label>
-
+        </div>
+    </div>
 
 
     <div class="list">
       <div class="list">
-        <label class="item item-input item-select">
+        <div class="item item-input item-select" style="width:70%;display: inline-block">
           <div class="input-label">
             含量单位sizeUnit
           </div>
           <select style="font-size: 16px" ng-model="selected.sizeUnit"
                   ng-options="ob.label for ob in sizeUnitArray"  ng-change="getScaleValueArrs()" >
           </select>
-        </label>
+        </div>
+        <button class="button button-positive" style="margin-left: 10%" ng-click="editCommodity()">
+          编辑
+        </button>
       </div>
       <div class="list">
         <label class="item item-input item-select">
@@ -111,8 +109,9 @@
       <button class="button" ng-click="savePrice()">
         保存
       </button>
+      <span style="width:20%"></span>
       <button class="button" ng-click="addGoods()">
-        添加
+       取消
       </button>
     </div>
 
@@ -131,6 +130,37 @@
       </ion-content>
     </div>
   </script>
+
+  <script id="additional.html" type="text/ng-template">
+    <div class = "modal">
+      <ion-header-bar>
+        <button class="button button-block button-positive" style="font-weight: bolder">请输入商品名</button>
+      </ion-header-bar>
+      <ion-content>
+        <div class="card">
+          <div class="item item-text-wrap">
+            <label class="item item-input">
+              <span class="input-label">分类:</span>
+            </label>
+            <label class="item item-input">
+              <span class="input-label">名称</span>
+              <input type="text" ng-model="commodity_name" style="border:1px solid ">
+            </label>
+            <div style="text-align: center">
+              <button class="button button-block button-positive" style="width:30%;display: inline-block" ng-click="addCommodity(commodity_name)">
+                添加
+              </button>
+              <span style="display: inline-block;width:10%"></span>
+              <button class="button button-block button-positive" style="width:30%;display: inline-block" ng-click="modalClose('additionModal')">
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      </ion-content>
+    </div>
+  </script>
+
 
   <script id="edit.html" type="text/ng-template">
     <div class = "modal">
@@ -152,9 +182,10 @@
                 添加
               </button>
               <span style="width:20%"></span>
-              <button class="button button-block button-positive">
+              <button class="button button-block button-positive" ng-click="fuck">
                 取消
               </button>
+
             </label>
           </div>
         </div>

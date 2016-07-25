@@ -1,7 +1,7 @@
 angular.module('app')
   .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal) {
     $scope.catalogArrFirsts=new Array;
-    $scope.catalogArrSeconds=new Array;
+    $scope.catalogArrSeconds=[];
     $scope.catalogArrThirds=new Array;
     $scope.sizeUnitArray=new Array;
     $scope.scaleArray =new Array;
@@ -67,6 +67,15 @@ angular.module('app')
     $scope.barCodes = new Array();
     $scope.selectedCode = {codeNum:'',commodityId:''};
     $scope.goods={};
+
+    $scope.modalClose=function(id){
+      $scope[id].hide();
+    }
+
+    $scope.addCommodity=function(name){
+      console.log('name=' + name);
+    }
+
     //初始化模态框
     $ionicModal.fromTemplateUrl('codeNum.html', {
       scope: $scope,
@@ -82,6 +91,17 @@ angular.module('app')
       $scope.editModal = modal;
     });
 
+    $ionicModal.fromTemplateUrl('additional.html', {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.additionModal = modal;
+    });
+
+    $scope.editCommodity=function(){
+      //$scope.editModal.show();
+      $scope.additionModal.show();
+    }
 
 
 
@@ -236,7 +256,10 @@ angular.module('app')
       $scope.editModal.remove();
     });
 
-
+    $scope.fuck=function()
+    {
+      console.log('fuck.....');
+    }
     $scope.func=function(codeNum){
 
       $scope.barcodeModal.hide();
@@ -245,17 +268,45 @@ angular.module('app')
         params: {
           commodityId: codeNum
         },
-        url: "/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityFormByCommodityIdMobile.do"
+        url: "/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityByCommodityIdMobile.do"
       }).success(function (response) {
         if (response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== "") {
           alert(response.errorMessage);
           $state.go("login");
         } else {
           if (response.object !== undefined || response.object !== null || response.object !== "") {
-            var obj=response;
-            $scope.nombre=obj.nombre;
-            $scope.sizeValue=obj.sizeValue;
-            sizeUnit
+            if(response.marcaCatalogArr!==undefined&&response.marcaCatalogArr!==null)
+                $scope.catalogArrSeconds=response.marcaCatalogArr;
+            $scope.catalogArrThirds=response.presentacionCatalogArr;
+            if(response.scaleUnitArr!==undefined&&response.scaleUnitArr!==null){
+              $scope.scaleArray=response.scaleUnitArr;
+            }else{
+              $scope.scaleArray=[];
+            }
+
+            $scope.selected.catalogFirst=response.rubro;
+            $scope.selected.catalogSecond=response.marca;
+            $scope.selected.catalogThird=response.presentacion;
+            $scope.nombre=response.nombre;
+            $scope.sizeValue=response.sizeValue;
+            var sizeu=response.sizeUnit;
+            var scaleu=response.scaleUnit;
+            var taxId=response.taxId;
+            $scope.sizeUnitArray.map(function(item,i){
+              if(item.value==sizeu){
+                $scope.selected.sizeUnit=item;
+              }
+            });
+            $scope.scaleArray.map(function(item,i){
+              if(item.value==sizeu){
+                $scope.selected.scaleArray=item;
+              }
+            });
+            $scope.taxArray.map(function(item,i){
+              if(item.value==sizeu){
+                $scope.selected.tax=item;
+              }
+            });
 
           }
         }
