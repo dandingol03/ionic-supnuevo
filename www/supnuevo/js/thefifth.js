@@ -1,5 +1,6 @@
 angular.module('app')
-  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal) {
+  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal,locals) {
+    $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.catalogArrFirsts=new Array;
     $scope.catalogArrSeconds=[];
     $scope.catalogArrThirds=new Array;
@@ -72,9 +73,7 @@ angular.module('app')
       $scope[id].hide();
     }
 
-    $scope.addCommodity=function(name){
-      console.log('name=' + name);
-    }
+
 
     //初始化模态框
     $ionicModal.fromTemplateUrl('codeNum.html', {
@@ -84,13 +83,6 @@ angular.module('app')
       $scope.barcodeModal = modal;
     });
 
-    $ionicModal.fromTemplateUrl('edit.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.editModal = modal;
-    });
-
     $ionicModal.fromTemplateUrl('additional.html', {
       scope: $scope,
       animation: 'slide-in-up'
@@ -98,9 +90,23 @@ angular.module('app')
       $scope.additionModal = modal;
     });
 
-    $scope.editCommodity=function(){
+    $scope.editCommodity=function(a,b,c){
       //$scope.editModal.show();
       $scope.additionModal.show();
+      if(a!==null&&a!==undefined){
+        if(b!==null&&b!==undefined){
+          $scope.category= a.label+"--"+ b.label;
+          $scope.parentId= b.value;
+        }else{
+          $scope.category= a.label;
+          $scope.parentId= a.value;
+        }
+      }else{
+        $scope.category=""
+        $scope.parentId=null;
+      };
+      $scope.beforeModify=c;
+
     }
 
 
@@ -259,7 +265,43 @@ angular.module('app')
     $scope.fuck=function()
     {
       console.log('fuck.....');
-    }
+    };
+    $scope.addCommodity=function(commodity_name){
+      $http({
+        method:"post",
+        params:{
+          parentId:$scope.parentId,
+          catalogName:commodity_name
+
+        },
+        url:"/proxy/supnuevo/supnuevoCommodityAddNewSupnuevoCommonCommodityCatalogMobile.do",
+
+      }).success(function(response){
+          alert(response.message);
+          $scope.additionModal.hide();
+        }
+      ).error(function(err){
+          alert(err.toSource());
+        });
+    };
+    $scope.modifyCommodity=function(commodity_name){
+      $http({
+        method:"post",
+        params:{
+          catalogId:$scope.beforeModify,
+          catalogName:commodity_name,
+          supnuevoMerchantId:$scope.user.supnuevoMerchantId
+        },
+        url:"/proxy/supnuevo/supnuevoCommodityModifySupnuevoCommonCommodityCatalogMobile.do",
+
+      }).success(function(response){
+          alert(response.message);
+          $scope.additionModal.hide();
+        }
+      ).error(function(err){
+          alert(err.toSource());
+        });
+    };
     $scope.func=function(codeNum){
 
       $scope.barcodeModal.hide();
