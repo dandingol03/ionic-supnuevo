@@ -12,8 +12,11 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+
     });
   })
+
+
 .config(function($stateProvider,$urlRouterProvider){
 
         $stateProvider.state('verify',{
@@ -47,7 +50,7 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
 
        );
 
-        $urlRouterProvider.otherwise('/thefifth');
+        $urlRouterProvider.otherwise('/login');
     })
 
 
@@ -67,7 +70,8 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
     //});
 
   //})
-  .constant("rmiPath","http://158.69.137.173:80")
-  //.constant("rmiPath","http:://211.87.225.207:8080/supnuevo")
-  //.constant("rmiPath","http:://211.87.225.195:8080/supnuevo")
+  //.constant("rmiPath","http://158.69.137.173:80")
+
+  .constant("rmiPath","http://211.87.225.199:8080/supnuevo")
+// .constant("rmiPath","/proxy")
 

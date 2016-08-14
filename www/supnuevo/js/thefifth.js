@@ -1,5 +1,5 @@
 angular.module('app')
-  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal,locals) {
+  .controller('theFifthController',function($scope,$state,$ionicLoading,$http,$ionicModal,locals,rmiPath) {
     $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.catalogArrFirsts=new Array;
     $scope.catalogArrSeconds=[];
@@ -32,7 +32,7 @@ angular.module('app')
       console.log('..');
     }
 
-    $http.get("/proxy/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''")
+    $http.get(rmiPath+"/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''")
       .success(function(response) {
         if (response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !== "") {
           var catalogArr = response.catalogArr;
@@ -67,7 +67,7 @@ angular.module('app')
       });
     $scope.barCodes = new Array();
     $scope.selectedCode = {codeNum:'',commodityId:''};
-    $scope.goods={};
+    $scope.code={codigo:'',commodityId:''};
 
     $scope.modalClose=function(id){
       $scope[id].hide();
@@ -97,13 +97,16 @@ angular.module('app')
         if(b!==null&&b!==undefined){
           $scope.category= a.label+"--"+ b.label;
           $scope.parentId= b.value;
+          $scope.flag=3;
         }else{
           $scope.category= a.label;
           $scope.parentId= a.value;
+          $scope.flag=2;
         }
       }else{
         $scope.category=""
         $scope.parentId=null;
+        $scope.flag=1;
       };
       $scope.beforeModify=c;
 
@@ -112,15 +115,15 @@ angular.module('app')
 
 
     $scope.queryGoodsCode=function() {
-      var code = $scope.goods.codeNum;
+      var code = $scope.code.codigo;
       if (code !== null && code.length == 4) {
         $scope.barCodes = [];
         $http({
           method: "post",
           params: {
-            input: $scope.goods.codeNum
+            input: code
           },
-          url: "/proxy/supnuevo/getQueryDataListByInputStringIonic.do",
+          url:rmiPath+ "/supnuevo/getQueryDataListByInputStringIonic.do",
           error: function (err) {
           },
         }).success(function (response) {
@@ -162,7 +165,7 @@ angular.module('app')
         params:{
           parentId:$scope.selected.catalogFirst.value
         },
-        url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do"
+        url:rmiPath+"/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do"
       }).success(function(response){
         if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
 
@@ -171,6 +174,7 @@ angular.module('app')
         }else{
           if(response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !==""){
             var arr = response.catalogArr;
+            $scope.catalogArrSeconds=new Array;
             for(var i = 0 ; i < arr.length;i++){
               var o = {value:'',label:''};
               o.label = arr[i].label;
@@ -188,7 +192,35 @@ angular.module('app')
 
       })
     }
+    $scope.getcatalogFirstInfo=function()
+    {
+      //  console.log('id of ob='+ob.id);
+      $http({
+        method:"post",
+        url:rmiPath+"/supnuevo/supnuevoSupnuevoCommonCommodityModifyInitMobile.do?parentId=''"
+      }).success(function(response){
+        if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
 
+          alert(response.errorMessage);
+          $state.go("login");
+        }else{
+          if (response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !== "") {
+            var catalogArr = response.catalogArr;
+            $scope.catalogArrFirsts=new Array;
+            for (var i = 0; i < catalogArr.length; i++) {
+              var o =new Object();
+              o.label = catalogArr[i].label;
+              o.value = catalogArr[i].value;
+              $scope.catalogArrFirsts.push(o);
+            }
+          }else{
+            alert(response.message);
+          }
+        }
+      }).error(function(err){
+        alert(err.toSource());
+      })
+    }
 
 
     $scope.getcatalogThirdInfo=function()
@@ -198,7 +230,7 @@ angular.module('app')
         params:{
           parentId:$scope.selected.catalogSecond.value
         },
-        url:"/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
+        url:rmiPath+"/supnuevo/supnuevoGetSupnuevoCommonCommodityCataLogInfoListMobile.do",
         error:function(err){
 
         },
@@ -210,6 +242,7 @@ angular.module('app')
         }else{
           if(response.catalogArr !== undefined || response.catalogArr !== null || response.catalogArr !==""){
             var catalogArr = response.catalogArr;
+            $scope.catalogArrThirds=new Array;
             for(var i = 0 ; i < catalogArr.length;i++){
               var o = catalogArr[i];
               $scope.catalogArrThirds.push(o);
@@ -232,7 +265,7 @@ angular.module('app')
         params:{
           sizeUnit:$scope.selected.sizeUnit.value
         },
-        url:"/proxy/supnuevo/supnuevoGetSupnuevoScaleInfoListMobile.do",
+        url:rmiPath+"/supnuevo/supnuevoGetSupnuevoScaleInfoListMobile.do",
         error:function(err){
 
         },
@@ -243,6 +276,7 @@ angular.module('app')
         }else{
           if(response.scaleArr !== undefined || response.scaleArr !== null || response.scaleArr !==""){
             var scaleArr = response.scaleArr;
+            $scope.scaleArray=new Array;
             for(var i = 0 ; i < scaleArr.length;i++){
               var o = scaleArr[i];
               $scope.scaleArray.push(o);
@@ -274,11 +308,19 @@ angular.module('app')
           catalogName:commodity_name
 
         },
-        url:"/proxy/supnuevo/supnuevoCommodityAddNewSupnuevoCommonCommodityCatalogMobile.do",
+        url:rmiPath+"/supnuevo/supnuevoCommodityAddNewSupnuevoCommonCommodityCatalogMobile.do",
 
       }).success(function(response){
           alert(response.message);
           $scope.additionModal.hide();
+          var flag=$scope.flag;
+          if(flag==1){
+            $scope.getcatalogFirstInfo();
+          }else if(flag==2){
+            $scope.getcatalogSecondInfo();
+          }else if(flag==3){
+            $scope.getcatalogThirdInfo();
+          }
         }
       ).error(function(err){
           alert(err.toSource());
@@ -292,25 +334,62 @@ angular.module('app')
           catalogName:commodity_name,
           supnuevoMerchantId:$scope.user.supnuevoMerchantId
         },
-        url:"/proxy/supnuevo/supnuevoCommodityModifySupnuevoCommonCommodityCatalogMobile.do",
+        url:rmiPath+"/supnuevo/supnuevoCommodityModifySupnuevoCommonCommodityCatalogMobile.do",
 
       }).success(function(response){
           alert(response.message);
           $scope.additionModal.hide();
+          var flag=$scope.flag;
+          if(flag==1){
+            $scope.getcatalogFirstInfo();
+          }else if(flag==2){
+            $scope.getcatalogSecondInfo();
+          }else if(flag==3){
+            $scope.getcatalogThirdInfo();
+          }
         }
       ).error(function(err){
           alert(err.toSource());
         });
     };
-    $scope.func=function(codeNum){
-
+    $scope.getNombre=function(){
+      var rubro= $scope.selected.catalogFirst.label;
+      var marcar=$scope.selected.catalogSecond.label;
+      var presen=$scope.selected.catalogThird.label;
+      $scope.nombre=rubro.substring(0,3)+"-"+marcar.substring(0,3)+"-"+presen.substring(0,9);
+    };
+    $scope.saveCommondity=function(){
+      $http({
+        method: "post",
+        params: {
+          supnuevoMerchantId: $scope.user.supnuevoMerchantId,
+          commodityId:$scope.code.commodityId,
+          presentacionId:$scope.selected.catalogThird.value,
+          taxId:$scope.selected.tax.value,
+          nombre:$scope.nombre,
+          sizeValue:$scope.sizeValue,
+          sizeUnit:$scope.selected.sizeUnit.value,
+          scaleUnit:$scope.selected.sizeValue.value
+        },
+        url: rmiPath+"/supnuevo/supnuevoUpdateSupnuevoCommonCommodityMobile.do"
+      }).success(function(response){
+          alert(response.message);
+      }).error(function(){
+        alert(err.toSource());
+      })
+    };
+    $scope.cancel=function(){
+      $state.go("login");
+    };
+    $scope.func=function(code){
+      $scope.code=code;
       $scope.barcodeModal.hide();
       $http({
         method: "post",
         params: {
-          commodityId: codeNum
+          commodityId: code.commodityId
         },
-        url: "/proxy/supnuevo/supnuevoGetSupnuevoCommonCommodityByCommodityIdMobile.do"
+        url: rmiPath+"/supnuevo/supnuevoGetSupnuevoCommonCommodityByCommodityIdMobile.do"
       }).success(function (response) {
         if (response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== "") {
           alert(response.errorMessage);
@@ -325,14 +404,13 @@ angular.module('app')
             }else{
               $scope.scaleArray=[];
             }
-
             $scope.selected.catalogFirst=response.rubro;
             $scope.selected.catalogSecond=response.marca;
             $scope.selected.catalogThird=response.presentacion;
             $scope.nombre=response.nombre;
             $scope.sizeValue=response.sizeValue;
             var sizeu=response.sizeUnit;
-            var scaleu=response.scaleUnit;
+            var scale=response.scaleUnit;
             var taxId=response.taxId;
             $scope.sizeUnitArray.map(function(item,i){
               if(item.value==sizeu){
@@ -340,12 +418,12 @@ angular.module('app')
               }
             });
             $scope.scaleArray.map(function(item,i){
-              if(item.value==sizeu){
+              if(item.value==scale){
                 $scope.selected.scaleArray=item;
               }
             });
             $scope.taxArray.map(function(item,i){
-              if(item.value==sizeu){
+              if(item.value==taxId){
                 $scope.selected.tax=item;
               }
             });

@@ -5,6 +5,8 @@ angular.module('app')
 
 
 
+
+
     $scope.user = [{
       'username':'',
       'password':'',
@@ -52,20 +54,26 @@ angular.module('app')
             loginName:user.username,
             password:user.password
           },
-          url:'/serviceHall/bsuims/reactPageDataRequest.do',
+          url:supnuevoUrl,
 
         }).success(function(response){
           var errorMsg =  response.errorMsg;
           if(errorMsg !== null && errorMsg !== undefined && errorMsg !== ""){
             alert(errorMsg);
-            $cordovaProgress.hide();
+
           }else{
             var supnuevoMerchantId = response.merchantId;
+            locals.set("merchantStates",response.merchantStates);
             locals.set("username",user.username);
             locals.set("password",user.password);
             locals.set("supnuevoMerchantId",supnuevoMerchantId);
-            $state.go("query");
-            $cordovaProgress.hide();
+            if(response.merchantStates[0]==1){
+              $state.go("query");
+            }else{
+              $state.go("thefifth");
+            }
+
+
           }
         }).error(function(err){
             alert(err.toSource());
