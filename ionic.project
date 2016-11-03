@@ -7,8 +7,12 @@
            "proxyUrl": "http://localhost:8090/serviceHall/"
         },
         {
-          "path":"/proxy",
-          "proxyUrl":"http://localhost:8080/supnuevo/"
+            "path":"/proxy/local",
+            "proxyUrl":"http://localhost:8080/supnuevo/"
+        },
+        {
+           "path":"/proxy",
+           "proxyUrl":"http://142.4.194.0:8080/"
         }
       ]
 }

@@ -1,11 +1,7 @@
 angular.module('app')
 .controller('loginController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$cordovaNetwork,locals,rmiPath){
 
-        var supnuevoUrl=rmiPath+"/supnuevo/supnuevoGetUserLoginJSONObjectMobile.do";
-
-
-
-
+    var supnuevoUrl=rmiPath+"/supnuevo/supnuevoGetUserLoginJSONObjectMobile.do";
 
     $scope.user = [{
       'username':'',
@@ -61,22 +57,22 @@ angular.module('app')
           if(errorMsg !== null && errorMsg !== undefined && errorMsg !== ""){
             alert(errorMsg);
 
-          }else{
-            var supnuevoMerchantId = response.merchantId;
-            locals.set("merchantStates",response.merchantStates);
-            locals.set("username",user.username);
-            locals.set("password",user.password);
-            locals.set("supnuevoMerchantId",supnuevoMerchantId);
-            if(response.merchantStates[0]==1){
+           }else{
+          //   var supnuevoMerchantId = response.merchantId;
+          //   locals.set("merchantStates",response.merchantStates);
+          //   locals.set("username",user.username);
+          //   locals.set("password",user.password);
+          //   locals.set("supnuevoMerchantId",supnuevoMerchantId);
+          //   if(response.merchantStates[0]==1){
               $state.go("query");
-            }else{
-              $state.go("thefifth");
+           // }else{
+            //  $state.go("thefifth");
             }
 
 
-          }
+          //}
         }).error(function(err){
-            alert(err.toSource());
+            alert(err.toString());
             $ionicLoading.show({
               template:'connect the server timeout',
               duration:'2000'

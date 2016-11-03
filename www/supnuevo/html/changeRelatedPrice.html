@@ -1,0 +1,55 @@
+<ion-view  name="query-view">
+  <ion-nav-bar class="bar-positive" align-title="center">
+    <ion-nav-title>
+     solrojo
+    </ion-nav-title>
+  </ion-nav-bar>
+  <ion-content class="padding" onscroll="false">
+
+    <label class="item item-input">
+      <span>改动的价格:</span>
+      <span>$20000</span>
+    </label>
+
+    <div class="list" style="background-color: transparent;">
+
+      <div class="item item-divider" style="background-color: transparent;border-top:0px;">
+        关联产品列表
+      </div>
+
+      <button ng-click="selectAll()">
+        全选
+      </button>
+
+      <div class="item" ng-repeat="good in groupGoods" style="background-color: transparent;padding: 0;">
+
+        <div class="row" ng-click="good_check(good)">
+          <div class="col-40" style="padding-top: 1%;">
+            <span>{{good.code}}</span>
+          </div>
+          <div class="col-40" style="padding-top: 1%;">
+            <span>{{good.name}}</span>
+          </div>
+          <div class="col-20" style="position: relative;font-size: 2em;">
+            <i ng-if="good.checked!=true" class="ion-ios-checkmark-outline"></i>
+            <i ng-if="good.checked==true" class="ion-ios-checkmark"></i>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="button-bar bar-positive">
+
+      <button class="button" ng-click="changePriceRelated()">
+        改价
+      </button>
+
+    </div>
+
+
+  </ion-content>
+
+
+</ion-view>
+

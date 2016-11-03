@@ -379,5 +379,11 @@
     }
     $scope.$on('$destroy', function() {
       $scope.codeNumModal.remove();
-    });
+    })
+    $scope.changePriceRelated = function(){
+      $state.go('changeRelatedPrice',{priceShow:JSON.stringify($scope.selectedCodeInfo.priceShow)})
+    }
+
+
   })
+
