@@ -8,29 +8,33 @@
 
     <label class="item item-input">
       <span>改动的价格:</span>
-      <span>$20000</span>
+      <span>{{item.priceShow}}</span>
     </label>
 
     <div class="list" style="background-color: transparent;">
 
       <div class="item item-divider" style="background-color: transparent;border-top:0px;">
-        关联产品列表
+        商品组名:{{item.groupName}}
       </div>
 
-      <button ng-click="selectAll()">
+      <button ng-click="selectAll()" style="background-color: #e5e5e5;margin-left: 65%;">
         全选
       </button>
 
-      <div class="item" ng-repeat="good in groupGoods" style="background-color: transparent;padding: 0;">
+      <button ng-click="selectNo()" style="background-color: #e5e5e5;margin-left: 5%;">
+        全不选
+      </button>
+
+      <div class="item" ng-repeat="good in relatedGoods" style="background-color: transparent;padding: 0;">
 
         <div class="row" ng-click="good_check(good)">
-          <div class="col-40" style="padding-top: 1%;">
-            <span>{{good.code}}</span>
+          <div class="col-45" style="padding-top: 1%;padding-left: 15%;padding-right:8%;">
+            <span>{{good.codigo}}</span>
           </div>
-          <div class="col-40" style="padding-top: 1%;">
-            <span>{{good.name}}</span>
+          <div class="col-45" style="padding-top: 1%;">
+            <span>{{good.nombre}}</span>
           </div>
-          <div class="col-20" style="position: relative;font-size: 2em;">
+          <div class="col-10" style="position: absolute;font-size: 180%;">
             <i ng-if="good.checked!=true" class="ion-ios-checkmark-outline"></i>
             <i ng-if="good.checked==true" class="ion-ios-checkmark"></i>
           </div>
@@ -45,6 +49,9 @@
         改价
       </button>
 
+      <button class="button" ng-click="goto('/query')">
+        返回
+      </button>
     </div>
 
 

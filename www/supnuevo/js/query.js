@@ -1,5 +1,5 @@
    angular.module('app')
-  .controller('queryController',function($scope,$state,$http,$cordovaProgress,$ionicPlatform,locals,rmiPath,$ionicModal){
+  .controller('queryController',function($scope,$state,$http,$ionicPlatform,locals,rmiPath,$ionicModal){
     $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.selectedCode = {codeNum:''};
     //$scope.updatePrice = new Object();
@@ -63,10 +63,10 @@
 
           },
         }).success(function(response){
-          cordova.plugins.Keyboard.close();
+          //cordova.plugins.Keyboard.close();
           $scope.goods.codeNum = '';
           if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
-            $cordovaProgress.hide();
+            //TODO:add ionicloading plugin
             alert(response.errorMessage);
             $state.go("login");
           }else{
@@ -82,19 +82,16 @@
             o.value = array[i].codigo;
             $scope.barCodes.push(o);
           }
-          $cordovaProgress.hide();
+
           $scope.codeNumModal.show();
           }else{
             alert(response.message);
-            $cordovaProgress.hide();
+
           }
         }
         }).error(function(err){
           alert(err.toSource());
-          $cordovaProgress.show({
-            template:'connect the server timeout',
-            duration:'2000'
-          });
+
         })
 
       }
@@ -136,14 +133,13 @@
 
     }
     $scope.verify = function(){
-      if(cordova.plugins.Keyboard.isVisible){
-
-      }else{
+     // if(cordova.plugins.Keyboard.isVisible){
+      // }else{
         $scope.selectedCodeInfo.price = Math.round($scope.selectedCodeInfo.priceShow * 100)/100;
         $scope.selectedCodeInfo.price1 = Math.round($scope.selectedCodeInfo.priceShow * 100)/100;
         $scope.taxMark = 0;
         $scope.amount = 0;
-      }
+      //}
     }
     $scope.verify1 = function(){
       if(isNaN($scope.selectedCodeInfo.priceShow)){
@@ -380,8 +376,12 @@
     $scope.$on('$destroy', function() {
       $scope.codeNumModal.remove();
     })
+
     $scope.changePriceRelated = function(){
-      $state.go('changeRelatedPrice',{priceShow:JSON.stringify($scope.selectedCodeInfo.priceShow)})
+      if($scope.selectedCodeInfo.groupId!=null&&$scope.selectedCodeInfo.groupId!=undefined){
+        $state.go('changeRelatedPrice',{selectedCodeinfo:JSON.stringify($scope.selectedCodeInfo)});
+      }
+
     }
 
 

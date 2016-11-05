@@ -50,7 +50,7 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
          });
 
         $stateProvider.state('changeRelatedPrice',{
-          url:'/changeRelatedPrice/:priceShow',
+          url:'/changeRelatedPrice/:selectedCodeinfo',
           controller:'changeRelatedPriceController',
           templateUrl:'supnuevo/html/changeRelatedPrice.html'
         });
@@ -78,6 +78,6 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
   //.constant("rmiPath","http://158.69.137.173:80")
 
   //.constant("rmiPath","http://142.4.194.0:8080/supnuevo")
- //.constant("rmiPath","http://142.4.194.0:8080/")
-  .constant("rmiPath","/proxy")
+ .constant("rmiPath","http://142.4.194.0:8080/")
+  //.constant("rmiPath","/proxy/local")
 

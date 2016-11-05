@@ -1,5 +1,6 @@
 angular.module('app')
-.controller('loginController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$cordovaNetwork,locals,rmiPath){
+.controller('loginController',function($scope,$state,$ionicLoading,$http,$cordovaProgress,$cordovaNetwork,locals,rmiPath
+,$rootScope){
 
     var supnuevoUrl=rmiPath+"/supnuevo/supnuevoGetUserLoginJSONObjectMobile.do";
 
@@ -58,19 +59,20 @@ angular.module('app')
             alert(errorMsg);
 
            }else{
-          //   var supnuevoMerchantId = response.merchantId;
-          //   locals.set("merchantStates",response.merchantStates);
-          //   locals.set("username",user.username);
-          //   locals.set("password",user.password);
-          //   locals.set("supnuevoMerchantId",supnuevoMerchantId);
-          //   if(response.merchantStates[0]==1){
+             var supnuevoMerchantId = response.merchantId;
+            $rootScope.supnuevoMerchantId = response.merchantId;
+             locals.set("merchantStates",response.merchantStates);
+             locals.set("username",user.username);
+             locals.set("password",user.password);
+             locals.set("supnuevoMerchantId",supnuevoMerchantId);
+             if(response.merchantStates[0]==1){
               $state.go("query");
-           // }else{
-            //  $state.go("thefifth");
+            }else{
+              $state.go("thefifth");
             }
 
 
-          //}
+          }
         }).error(function(err){
             alert(err.toString());
             $ionicLoading.show({
