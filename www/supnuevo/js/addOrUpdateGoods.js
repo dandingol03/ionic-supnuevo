@@ -1,5 +1,10 @@
+/**
+ * Created by yiming on 16/11/9.
+ */
 angular.module('app')
-  .controller('addGoodsController',function($scope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
+  .controller('addOrUpdateGoodsController',function($scope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
+
+
     $scope.commodity = {
       username:locals.get('username',''),
       codigo :'',
@@ -38,7 +43,7 @@ angular.module('app')
       ProductColor: '黃'
     }];
 
-    $scope.sizeUnitTest=[{lable:'1'},{lable:'2'}];
+
 
     if($stateParams.info!==undefined&&$stateParams.info!==null)
     {
@@ -80,6 +85,7 @@ angular.module('app')
     $scope.goBack = function(){
       $state.go("query");
     }
+
 
     /*** select sizeUnit modal ***/
     $ionicModal.fromTemplateUrl('supnuevo/html/sizeUnit_modal.html',{
@@ -286,4 +292,9 @@ angular.module('app')
       }
 
     }
+
+
+
+
+
   })

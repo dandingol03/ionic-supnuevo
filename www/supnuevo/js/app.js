@@ -38,9 +38,15 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
         });
 
         $stateProvider.state('addGoods',{
-            url:'/addGoods?taxName&sizeArr',
+            url:'/addGoods/:info',
             controller: 'addGoodsController',
             templateUrl:'supnuevo/html/addGoods.html'
+        });
+
+        $stateProvider.state('addOrUpdateGoods',{
+            url:'/addOrUpdateGoods/:info',
+            controller: 'addOrUpdateGoodsController',
+            templateUrl:'supnuevo/html/addOrUpdateGoods.html'
         });
 
         $stateProvider.state('thefifth',{
@@ -78,6 +84,6 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
   //.constant("rmiPath","http://158.69.137.173:80")
 
   //.constant("rmiPath","http://142.4.194.0:8080/supnuevo")
- .constant("rmiPath","http://142.4.194.0:8080/")
-  //.constant("rmiPath","/proxy/local")
+ //.constant("rmiPath","http://142.4.194.0:8080/")
+  .constant("rmiPath","/proxy/local")
 

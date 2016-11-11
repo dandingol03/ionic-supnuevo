@@ -224,13 +224,58 @@
             $scope.sizeArr.push(o);
           }
           //alert(JSON.stringify($scope.sizeArr));
-          $state.go("addGoods",{taxName:JSON.stringify($scope.tax),sizeArr:JSON.stringify($scope.sizeArr)});
+          $state.go("addGoods",{info:JSON.stringify({taxName:$scope.tax,sizeArr:$scope.sizeArr})});
           }
         }).error(function(){
 
         })
 
     }
+
+    $scope.updateGoods=function(){
+
+      $http({
+        method:"post",
+        params:{
+          merchantId:$scope.user.supnuevoMerchantId
+        },
+        url:rmiPath+"/supnuevo/supnuevoGetSupnuevoCommodityTaxInfoListMobile.do",
+      }).success(function(response){
+        if(response.errorMessage !== null && response.errorMessage !== undefined && response.errorMessage !== ""){
+          alert(response.errorMessage);
+          $state.go("login");
+        }else{
+          var taxArr = new Array();
+          var sizeArr = new Array();
+          response.taxArr.map(function(index,i){
+            taxArr.push(index);
+          })
+          response.sizeArr.map(function(index,i){
+            sizeArr.push(index);
+          })
+          for(var i = 0 ; i < taxArr.length;i++){
+            var o = {'value':'','label':''};
+            o.label = taxArr[i].label;
+            o.value = taxArr[i].value;
+            $scope.tax.push(o);
+          }
+          for(var i = 0 ; i < sizeArr.length;i++){
+            var o = {'value':'','label':''};
+            o.label = sizeArr[i].label;
+            o.value = sizeArr[i].value;
+            $scope.sizeArr.push(o);
+          }
+      $state.go("addOrUpdateGoods",{info:JSON.stringify({selectedCodeInfo:$scope.selectedCodeInfo,taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+        }
+      }).error(function(){
+
+      })
+
+        }
+
+
+
+
     $scope.addIVA = function(){
         if($scope.taxMark >= 0){
           $scope.taxMark = 1;

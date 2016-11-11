@@ -8,7 +8,7 @@
         },
         {
             "path":"/proxy/local",
-            "proxyUrl":"http://192.168.1.102:8080/supnuevo/"
+            "proxyUrl":"http://202.194.14.73/"
         },
         {
            "path":"/proxy",
