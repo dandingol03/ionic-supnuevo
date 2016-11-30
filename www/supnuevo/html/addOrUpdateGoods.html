@@ -1,19 +1,7 @@
 <ion-view  name="add-view">
   <ion-nav-bar class="bar-positive" align-title="center">
-    <ion-nav-title>
-      {{commodity.username}}
-    </ion-nav-title>
   </ion-nav-bar>
   <ion-content scroll="false" class="padding">
-
-    <div class="item"
-         style="margin:1px;border:0px;
-             padding:4px;background-color:transparent;overflow:initial;width: 65%;margin-left:16%;">
-      <select ng-model="select.item" ng-options="o.id for o in optData" ng-change="selectChanged()">
-        <option value="">-- 请选择 --</option>
-      </select>
-    </div>
-
 
     <label class="item item-input">
       <span class="input-label">商品内码</span>
@@ -32,7 +20,7 @@
       </span>
     </label>
 
-    <label class="item item-input">
+    <label class="item item-input" >
       <span class="input-label" >商品名称</span>
       <input type="text" ng-value="selectedCodeInfo.goodName" ng-model="commodity.nombre">
     </label>
@@ -41,24 +29,35 @@
       <input type="text" ng-value="selectedCodeInfo.setSizeValue" ng-model="commodity.sizeValue">
     </label>
 
-    <label class="item " ng-click="open_sizeUnitModal()">
+    <label class="item item-input" >
       <span class="input-label" style="width:35%;">含量单位</span>
+
+      <select ng-model="commodity.sizeUnited" ng-options="index.value as index.label for index  in sizeUnit" ng-change="changeSizeUnit()">
+        <option value="">请选择...</option>
+      </select>
     </label>
 
 
     <label class="item item-input">
       <span class="input-label" >比价单位</span>
+      <select ng-model="commodity.scaleUnited" ng-options="scale.label as scale.value for scale in scaleUnit">
+        <option value="">请选择...</option>
+      </select>
     </label>
 
     <label class="item item-input">
       <span class="input-label" >商品税类</span>
+      <select ng-model="commodity.taxId" ng-options="index.value as index.label for index in commodityTax">
+        <option value="">请选择...</option>
+      </select>
     </label>
-
     <button class="button button-block button-calm" ng-click="addSupnuevoCommonCommodity()">
       确认
     </button>
     <button class="button button-block button-assertive" ng-click="goBack()">
       返回
     </button>
+
+
   </ion-content>
 </ion-view>

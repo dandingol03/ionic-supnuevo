@@ -17,7 +17,7 @@
         商品组名:{{item.groupName}}
       </div>
 
-      <button ng-click="selectAll()" style="background-color: #e5e5e5;margin-left: 65%;">
+      <button ng-click="selectAll()" style="background-color: #e5e5e5;">
         全选
       </button>
 
@@ -27,19 +27,34 @@
 
       <div class="item" ng-repeat="good in relatedGoods" style="background-color: transparent;padding: 0;">
 
-        <div class="row" ng-click="good_check(good)">
-          <div class="col-45" style="padding-top: 1%;padding-left: 15%;padding-right:8%;">
-            <span>{{good.codigo}}</span>
-          </div>
-          <div class="col-45" style="padding-top: 1%;">
-            <span>{{good.nombre}}</span>
-          </div>
-          <div class="col-10" style="position: absolute;font-size: 180%;">
-            <i ng-if="good.checked!=true" class="ion-ios-checkmark-outline"></i>
-            <i ng-if="good.checked==true" class="ion-ios-checkmark"></i>
-          </div>
+          <div  ng-click="good_check(good)">
+            <div class="col-10" style="position: absolute;font-size: 180%;">
+              <i ng-if="good.checked!=true" class="ion-ios-checkmark-outline"></i>
+              <i ng-if="good.checked==true" class="ion-ios-checkmark"></i>
+            </div>
 
-        </div>
+            <div class="col-40" style="margin-left:10%;display: inline-block;">
+              <div>
+                <span>商品条码:</span>
+              </div>
+
+              <div>
+                <span>商品名称:</span>
+              </div>
+
+            </div>
+
+            <div class="col-50" style="display: inline-block;">
+              <div>
+                <span>{{good.codigo}}</span>
+              </div>
+
+              <div>
+                <span>{{good.goodName}}</span>
+              </div>
+
+            </div>
+          </div>
       </div>
     </div>
 

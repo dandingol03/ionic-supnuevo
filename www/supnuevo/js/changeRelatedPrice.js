@@ -27,12 +27,20 @@ angular.module('app')
       },
       url:rmiPath+"/supnuevo/supnuevoGetSupnuevoBuyerCommodityPriceFormListOfGroupMobile.do?",
     }).success(function(response){
-
       $scope.relatedGoods = response.array;
       $scope.relatedGoods.map(function(good,i) {
         if (good.priceId == $scope.item.priceId) {
           good.checked = true;
         }
+        if(good.sizeValue!=undefined&&good.sizeValue!=null
+          &&good.sizeUnit!=undefined&&good.sizeUnit!=null)
+        {
+          good.goodName=good.nombre+','+
+            good.sizeValue+','+good.sizeUnit;
+        }else{
+          good.goodName=good.nombre;
+        }
+
       })
 
     }).error(function(err){
@@ -86,6 +94,9 @@ angular.module('app')
       }).success(function(response){
 
         alert('改价成功');
+
+        $state.go('query');
+
 
       }).error(function(err){
         alert(err);

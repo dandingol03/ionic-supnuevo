@@ -1,5 +1,5 @@
    angular.module('app')
-  .controller('queryController',function($scope,$state,$http,$ionicPlatform,locals,rmiPath,$ionicModal){
+  .controller('queryController',function($scope,$state,$http,$ionicPlatform,locals,rmiPath,$ionicModal,$ionicPopup){
     $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.selectedCode = {codeNum:''};
     //$scope.updatePrice = new Object();
@@ -58,6 +58,7 @@
             codigo:code,
             merchantId:$scope.user.supnuevoMerchantId
           },
+
           url:rmiPath+"/supnuevo/supnuevoGetQueryDataListByInputStringBs.do",
           error:function(err){
 
@@ -96,13 +97,27 @@
 
       }
 
-
     }
     $scope.func = function(codeNum){
      // var codigo = $scope.selectedCode[codeNum]
       var supnuevoMerchantId =  $scope.user.supnuevoMerchantId;
       var codigo = codeNum;
-      $scope.selectedCode.codeNum = codeNum;
+
+      $scope.selectedCode.codeNum = codigo;
+      $scope.code = [];
+      $scope.myHTML='';
+
+      var i = 0;
+      var length = codeNum.length;
+      var count = length%5;
+      while(i<count-1) {
+        $scope.myHTML = $scope.myHTML+'<span>'+codeNum.substring(i*5,i*5+5)+'</span>';
+        i=i+1;
+      }
+      if(i==count-1){
+        $scope.myHTML = $scope.myHTML+'<span>'+codeNum.substring(i*5,length)+'</span>';
+      }
+
       $scope.codeNumModal.hide();
       $http({
         method:"post",
@@ -113,9 +128,21 @@
         url:rmiPath+"/supnuevo/supnuevoGetSupnuevoBuyerPriceFormByCodigoBs.do",
       }).success(function(response){
         var goodInfo = response.object;
+
         for(var info in goodInfo){
           $scope.selectedCodeInfo[info] = goodInfo[info];
         }
+        if($scope.selectedCodeInfo.setSizeValue!=undefined&&$scope.selectedCodeInfo.setSizeValue!=null
+          &&$scope.selectedCodeInfo.sizeUnit!=undefined&&$scope.selectedCodeInfo.sizeUnit!=null)
+        {
+          $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre+','+
+            $scope.selectedCodeInfo.setSizeValue+','+$scope.selectedCodeInfo.sizeUnit;
+
+        }else{
+          $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre;
+        }
+
+
         var printType = goodInfo["printType"];
         for(var i = 0 ; i < printType.length; i++){
           var j = i + 1;
@@ -130,8 +157,8 @@
       }).error(function(err){
         alert(err);
       })
-
     }
+
     $scope.verify = function(){
      // if(cordova.plugins.Keyboard.isVisible){
       // }else{
@@ -224,7 +251,7 @@
             $scope.sizeArr.push(o);
           }
           //alert(JSON.stringify($scope.sizeArr));
-          $state.go("addGoods",{info:JSON.stringify({taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+          $state.go("addOrUpdateGoods",{info:JSON.stringify({taxName:$scope.tax,sizeArr:$scope.sizeArr})});
           }
         }).error(function(){
 
@@ -265,7 +292,10 @@
             o.value = sizeArr[i].value;
             $scope.sizeArr.push(o);
           }
-      $state.go("addOrUpdateGoods",{info:JSON.stringify({selectedCodeInfo:$scope.selectedCodeInfo,taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+      $state.go("addOrUpdateGoods",
+        {info:JSON.stringify({selectedCodeInfo:$scope.selectedCodeInfo,taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+
+
         }
       }).error(function(){
 
@@ -326,7 +356,7 @@
       $scope.selectedCodeInfo.priceShow =$scope.selectedCodeInfo.price.toFixed(2);
     }
     $scope.savePrice = function(){
-      var price = $scope.selectedCodeInfo.price;
+      var price = $scope.selectedCodeInfo.priceShow;
       var priceId = $scope.selectedCodeInfo.priceId;
       var codigo = $scope.selectedCodeInfo.codigo;
       var merchantId = $scope.user.supnuevoMerchantId;
@@ -357,6 +387,13 @@
             $scope.amount = 0;
             $scope.goods = {codeNum: ''};
             $scope.barCodes = [];
+            $scope.selectedCode={codeNum:'',codeNum1:'',codeNum2:'',codeNum3:''};
+            $scope.myHTML='';
+
+            // $scope.code.map(function(subString,i) {
+            //   subString='';
+            // })
+
             $scope.selectedCodeInfo = {
               priceId: '',
               price: '',
@@ -366,7 +403,8 @@
               nombre: '',
               codigo: '',
               iva: '',
-              printType: ''
+              printType: '',
+              codeNum:''
             };
             $scope.printType = {type1: '0', type2: '0', type3: '0', type4: '0'};
             $scope.taxMark = 0;
@@ -380,8 +418,11 @@
         }).error(function(err){
           alert(err);
         })
+      }else{
+        alert('请输入查询商品后再进行改价!');
       }
     }
+
     $scope.updatePrintType1 = function(){
       if($scope.printType.type1 == '0'){
         $scope.class.class1 = "button button-block button-positive";
@@ -423,8 +464,34 @@
     })
 
     $scope.changePriceRelated = function(){
+
       if($scope.selectedCodeInfo.groupId!=null&&$scope.selectedCodeInfo.groupId!=undefined){
         $state.go('changeRelatedPrice',{selectedCodeinfo:JSON.stringify($scope.selectedCodeInfo)});
+        $scope.selectedCode.codeNum='';
+        $scope.selectedCodeInfo = {
+          priceId: '',
+          price: '',
+          oldPrice: '',
+          priceShow: '',
+          price1: '',
+          nombre: '',
+          codigo: '',
+          iva: '',
+          printType: ''
+        };
+      }else{
+
+        var confirmPopup = $ionicPopup.confirm({
+          title: '组改价',
+          template: '没有查询到相关商品,单击确定修改当前商品价格'
+        });
+        confirmPopup.then(function(res) {
+          if(res) {
+            $scope.savePrice();
+          } else {
+            console.log('You are not sure');
+          }
+        });
       }
 
     }

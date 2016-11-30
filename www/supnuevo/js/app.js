@@ -31,9 +31,19 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
         });
 
         $stateProvider.state('query',{
+            cache:false,
             url:'/query',
             controller: 'queryController',
             templateUrl:'supnuevo/html/query.html'
+
+        });
+
+
+        $stateProvider.state('queryNew',{
+          cache:false,
+          url:'/queryNew',
+          controller: 'queryNewController',
+          templateUrl:'supnuevo/html/queryNew.html'
 
         });
 
@@ -84,6 +94,9 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
   //.constant("rmiPath","http://158.69.137.173:80")
 
   //.constant("rmiPath","http://142.4.194.0:8080/supnuevo")
- //.constant("rmiPath","http://142.4.194.0:8080/")
-  .constant("rmiPath","/proxy/local")
+
+  .constant("rmiPath","http://142.4.194.0:8080/")
+
+ //.constant("rmiPath","/proxy/local")
+//.constant("rmiPath","http://192.168.1.102:8080/supnuevo")
 

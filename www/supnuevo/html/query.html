@@ -6,8 +6,7 @@
   </ion-nav-bar>
   <ion-content class="padding" onscroll="false">
     <label class="item item-input">
-      <span>请输入条码最后四位</span>
-      <input type="tel" ng-model="goods.codeNum" maxlength="4" ng-change="queryGoodsCode()">
+      <input type="tel" ng-model="goods.codeNum" maxlength="4" placeholder="请输入条码最后四位" ng-change="queryGoodsCode()">
       <i class="icon ion-close-circled" style="font-size:30px" on-tap="doClearGoodCode()" ng-if="goods.codeNum"></i>
     </label>
     <div class="button-bar button-stable" >
@@ -20,21 +19,15 @@
       <button class="button">{{selectedCodeInfo.suggestPrice}}</button>
       <button class="button"></button>
     </div>
-<!--    <p>点击下面条码或点击添加新商品</p>-->
-<!--    <label class="item item-input item-select" style="padding-left:20px">
-      <div class="input-label">
-        商品条码
-      </div>
-      <select ng-model="selectedCode.codeNum" ng-options="code.value as code.value for code in barCodes" ng-change=" ()">
-        <option value="">请选择...</option>
-      </select>
-    </label>-->
+
     <label class="item item-input">
-      <span>商品条码:{{selectedCode.codeNum}}</span>
+      <span>商品条码:</span>
+      <span ng-bind-html="myHTML"></span>
     </label>
     <label class="item item-input">
-      <span>商品名称:{{selectedCodeInfo.nombre}}</span>
+      <span>商品名称:{{selectedCodeInfo.goodName}}</span>
     </label>
+
     <label class="item item-input">
       <span class="input-label" >更新价位</span>
       <input type="text" ng-model="selectedCodeInfo.priceShow" ng-blur="verify()" ng-change="verify1()">
@@ -58,9 +51,7 @@
       <button class="button" ng-click="reducePercentage2()">-5%</button>
       <button class="button" ng-click="zero1()">0.50</button>
     </div>
-      <!--<ion-item>-->
-          <!--<span >{{selectedCodeInfo.codigo}}</span>-->
-      <!--</ion-item>-->
+
     <p></p>
     <div class="button-bar bar-positive">
       <button class="button" ng-click="savePrice()">

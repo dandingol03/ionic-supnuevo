@@ -8,6 +8,23 @@ angular.module('app')
       'username':'',
       'password':'',
     }];
+
+  $scope.goto = function(){
+    $state.go('addOrUpdateGoods');
+  }
+
+
+
+
+
+  $scope.myHTML = $scope.myHTML+'<span>111</span>';
+
+  $scope.clean = function(){
+    $scope.myHTML='';
+  }
+
+
+
     $scope.username=new Object();
     $scope.password= new Object();
     $scope.change = function(){
@@ -65,6 +82,7 @@ angular.module('app')
              locals.set("username",user.username);
              locals.set("password",user.password);
              locals.set("supnuevoMerchantId",supnuevoMerchantId);
+
              if(response.merchantStates[0]==1){
               $state.go("query");
             }else{
@@ -74,11 +92,14 @@ angular.module('app')
 
           }
         }).error(function(err){
+          if(err!=undefined&&err!=null){
             alert(err.toString());
             $ionicLoading.show({
               template:'connect the server timeout',
               duration:'2000'
             });
+          }
+
         })
       }else{
         $ionicLoading.show({

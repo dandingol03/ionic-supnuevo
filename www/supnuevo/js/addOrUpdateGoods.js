@@ -4,7 +4,6 @@
 angular.module('app')
   .controller('addOrUpdateGoodsController',function($scope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
 
-
     $scope.commodity = {
       username:locals.get('username',''),
       codigo :'',
@@ -23,7 +22,7 @@ angular.module('app')
     };
     $scope.selectChanged=function () {
       var item=$scope.select.item;
-      console.log('...');
+      alert('item');
     }
 
     $scope.optData = [{
@@ -44,7 +43,6 @@ angular.module('app')
     }];
 
 
-
     if($stateParams.info!==undefined&&$stateParams.info!==null)
     {
       $scope.info=$stateParams.info;
@@ -57,8 +55,8 @@ angular.module('app')
       if($scope.selectedCodeInfo.setSizeValue!=undefined&&$scope.selectedCodeInfo.setSizeValue!=null
         &&$scope.selectedCodeInfo.sizeUnit!=undefined&&$scope.selectedCodeInfo.sizeUnit!=null)
       {
-        $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre+
-          $scope.selectedCodeInfo.setSizeValue+$scope.selectedCodeInfo.sizeUnit;
+        $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre+','+
+          $scope.selectedCodeInfo.setSizeValue+','+$scope.selectedCodeInfo.sizeUnit;
       }else{
         $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre;
       }
@@ -86,7 +84,6 @@ angular.module('app')
       $state.go("query");
     }
 
-
     /*** select sizeUnit modal ***/
     $ionicModal.fromTemplateUrl('supnuevo/html/sizeUnit_modal.html',{
       scope:  $scope,
@@ -110,6 +107,7 @@ angular.module('app')
       $scope.scaleUnit = [];
       var val = $scope.commodity.sizeUnited;
       if(val !== null && val !== undefined && val !== ""){
+        alert('val='+val);
         $http({
           method:"post",
           params:{sizeUnit:val},
@@ -125,8 +123,11 @@ angular.module('app')
             o.value = scaleArr[i].value;
             $scope.scaleUnit.push(o);
           }
-        }).error(function(){
-
+        }).error(function(err){
+          for(var field in err){
+            alert('field'+field);
+          }
+          alert(err.toString());
         })
       }
 
@@ -137,11 +138,16 @@ angular.module('app')
     $scope.changeTax = function(){
 
     }
+
+
     $scope.addSupnuevoCommonCommodity = function(){
 
       if($scope.selectedCodeInfo!=undefined&&$scope.selectedCodeInfo!=null){
         var codigo = $scope.selectedCodeInfo.codigo;
         var taxId = $scope.commodity.taxId;
+        if($scope.commodity.nombre==undefined||$scope.commodity.nombre==null||$scope.commodity.nombre==''){
+          $scope.commodity.nombre=$scope.selectedCodeInfo.goodName;
+        }
         var nombre = $scope.commodity.nombre;
         var sizeValue = $scope.commodity.sizeValue;
         var sizeUnited = $scope.commodity.sizeUnited;
@@ -159,6 +165,16 @@ angular.module('app')
           alert("商品名称不能为空");
           return false;
         }
+        if(nombre !== null || nombre !== undefined || nombre !== ''){
+
+          var reg=eval('/^\\w{10,}$/');
+          var re=reg.exec(nombre);
+          if(re==undefined||re==null){
+            alert("商品名称不能少于10位");
+            return false;
+          }
+        }
+
         if(sizeValue === null || sizeValue === undefined || sizeValue === ''){
           alert("商品含量不能为空");
           return false;
@@ -182,8 +198,9 @@ angular.module('app')
             sizeUnited:sizeUnited,
             scaleUnited:scaleUnited
           },
-          url:rmiPath+"/supnuevo/supnuevoAddSupnuevoCommonCommodityMobile.do",
+          url:rmiPath+"/supnuevo/supnuevoSaveOrUpdateSupnuevoCommonCommodityMobile.do",
         }).success(function(response){
+
           var errorMsg = response.errorMsg;
           var message = response.message;
           if(errorMsg !== null && errorMsg !== undefined && errorMsg !== ""){
@@ -207,6 +224,7 @@ angular.module('app')
               scaleUnited:'',
               taxId:'',
             }
+            $state.go('query');
           }
 
         }).error(function(err){
@@ -227,6 +245,15 @@ angular.module('app')
           alert("商品条码不能为空");
           return false;
         }
+
+        if(codigo !== null || codigo !== undefined || codigo !== ''){
+          var reg=eval('/^\\w{5,}$/');
+          var re=reg.exec(codigo);
+          if(re==undefined||re==null){
+            alert("商品条码不能少于5位");
+            return false;
+          }
+        }
         if(taxId === null || taxId === undefined || taxId === ''){
           alert("商品税类不能为空");
           return false;
@@ -235,6 +262,16 @@ angular.module('app')
           alert("商品名称不能为空");
           return false;
         }
+        if(nombre !== null || nombre !== undefined || nombre !== ''){
+
+          var reg=eval('/^\\w{10,}$/');
+          var re=reg.exec(nombre);
+          if(re==undefined||re==null){
+            alert("商品名称不能少于10位");
+            return false;
+          }
+        }
+
         if(sizeValue === null || sizeValue === undefined || sizeValue === ''){
           alert("商品含量不能为空");
           return false;
@@ -258,7 +295,7 @@ angular.module('app')
             sizeUnited:sizeUnited,
             scaleUnited:scaleUnited
           },
-          url:rmiPath+"/supnuevo/supnuevoAddSupnuevoCommonCommodityMobile.do",
+          url:rmiPath+"/supnuevo/supnuevoSaveOrUpdateSupnuevoCommonCommodityMobile.do",
         }).success(function(response){
           var errorMsg = response.errorMsg;
           var message = response.message;
@@ -283,6 +320,7 @@ angular.module('app')
               scaleUnited:'',
               taxId:'',
             }
+            $state.go('query');
           }
 
         }).error(function(err){
