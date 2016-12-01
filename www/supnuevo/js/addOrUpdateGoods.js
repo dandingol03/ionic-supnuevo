@@ -2,7 +2,7 @@
  * Created by yiming on 16/11/9.
  */
 angular.module('app')
-  .controller('addOrUpdateGoodsController',function($scope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
+  .controller('addOrUpdateGoodsController',function($scope,$rootScope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
 
     $scope.commodity = {
       username:locals.get('username',''),
@@ -16,31 +16,6 @@ angular.module('app')
     $scope.commodityTax = new Array();
     $scope.sizeUnit = new Array();
     $scope.scaleUnit = new Array();
-
-
-    $scope.select={
-    };
-    $scope.selectChanged=function () {
-      var item=$scope.select.item;
-      alert('item');
-    }
-
-    $scope.optData = [{
-      id: 10001,
-      MainCategory: '男',
-      ProductName: '水洗T恤',
-      ProductColor: '白'
-    },{
-      id: 10002,
-      MainCategory: '女',
-      ProductName: '圓領短袖',
-      ProductColor: '黃'
-    },{
-      id: 10003,
-      MainCategory: '女',
-      ProductName: '圓領短袖',
-      ProductColor: '黃'
-    }];
 
 
     if($stateParams.info!==undefined&&$stateParams.info!==null)
@@ -63,6 +38,10 @@ angular.module('app')
 
     }
 
+    if($scope.info.myHTML!==undefined&&$scope.info.myHTML!==null){
+       $scope.myHTML=$scope.info.myHTML;
+    }
+
     if($scope.info.taxName!==undefined&&$scope.info.taxName!=null) {
       $scope.tax = $scope.info.taxName;
 
@@ -81,6 +60,12 @@ angular.module('app')
     }
 
     $scope.goBack = function(){
+
+      if($scope.selectedCodeInfo!=undefined&&$scope.selectedCodeInfo!=null){
+
+        $rootScope.codeNum=$scope.selectedCodeInfo.codigo;
+      }
+
       $state.go("query");
     }
 
@@ -107,7 +92,6 @@ angular.module('app')
       $scope.scaleUnit = [];
       var val = $scope.commodity.sizeUnited;
       if(val !== null && val !== undefined && val !== ""){
-        alert('val='+val);
         $http({
           method:"post",
           params:{sizeUnit:val},
@@ -142,14 +126,18 @@ angular.module('app')
 
     $scope.addSupnuevoCommonCommodity = function(){
 
+      //修改信息
       if($scope.selectedCodeInfo!=undefined&&$scope.selectedCodeInfo!=null){
         var codigo = $scope.selectedCodeInfo.codigo;
         var taxId = $scope.commodity.taxId;
         if($scope.commodity.nombre==undefined||$scope.commodity.nombre==null||$scope.commodity.nombre==''){
-          $scope.commodity.nombre=$scope.selectedCodeInfo.goodName;
+          $scope.commodity.nombre=$scope.selectedCodeInfo.nombre;
         }
         var nombre = $scope.commodity.nombre;
-        var sizeValue = $scope.commodity.sizeValue;
+        if($scope.commodity.setSizeValue==undefined||$scope.commodity.setSizeValue==null||$scope.commodity.nombre==''){
+          $scope.commodity.setSizeValue=$scope.selectedCodeInfo.setSizeValue;
+        }
+        var sizeValue = $scope.commodity.setSizeValue;
         var sizeUnited = $scope.commodity.sizeUnited;
         var scaleUnited = $scope.commodity.scaleUnited;
         var supnuevoMerchantId = locals.get('supnuevoMerchantId','');
@@ -166,10 +154,7 @@ angular.module('app')
           return false;
         }
         if(nombre !== null || nombre !== undefined || nombre !== ''){
-
-          var reg=eval('/^\\w{10,}$/');
-          var re=reg.exec(nombre);
-          if(re==undefined||re==null){
+          if(nombre.length<10){
             alert("商品名称不能少于10位");
             return false;
           }
@@ -216,14 +201,8 @@ angular.module('app')
           }
           if(message !== null && message !== undefined && message !== ""){
             alert(message);
-            $scope.commodity = {
-              codigo :'',
-              nombre : '',
-              sizeValue:'',
-              sizeUnited:'',
-              scaleUnited:'',
-              taxId:'',
-            }
+
+            $rootScope.codeNum=$scope.selectedCodeInfo.codigo;
             $state.go('query');
           }
 
@@ -232,12 +211,18 @@ angular.module('app')
         })
 
       }
+      //添加商品
       else{
-
         var codigo = $scope.commodity.codigo;
         var taxId = $scope.commodity.taxId;
+        if($scope.commodity.nombre==undefined||$scope.commodity.nombre==null||$scope.commodity.nombre==''){
+          $scope.commodity.nombre=$scope.selectedCodeInfo.nombre;
+        }
         var nombre = $scope.commodity.nombre;
-        var sizeValue = $scope.commodity.sizeValue;
+        if($scope.commodity.setSizeValue==undefined||$scope.commodity.setSizeValue==null||$scope.commodity.nombre==''){
+          $scope.commodity.setSizeValue=$scope.selectedCodeInfo.setSizeValue;
+        }
+        var sizeValue = $scope.commodity.setSizeValue;
         var sizeUnited = $scope.commodity.sizeUnited;
         var scaleUnited = $scope.commodity.scaleUnited;
         var supnuevoMerchantId = locals.get('supnuevoMerchantId','');
@@ -247,9 +232,7 @@ angular.module('app')
         }
 
         if(codigo !== null || codigo !== undefined || codigo !== ''){
-          var reg=eval('/^\\w{5,}$/');
-          var re=reg.exec(codigo);
-          if(re==undefined||re==null){
+          if(codigo.length<5){
             alert("商品条码不能少于5位");
             return false;
           }
@@ -262,11 +245,9 @@ angular.module('app')
           alert("商品名称不能为空");
           return false;
         }
-        if(nombre !== null || nombre !== undefined || nombre !== ''){
 
-          var reg=eval('/^\\w{10,}$/');
-          var re=reg.exec(nombre);
-          if(re==undefined||re==null){
+        if(nombre !== null || nombre !== undefined || nombre !== ''){
+          if(nombre.length<10){
             alert("商品名称不能少于10位");
             return false;
           }
@@ -312,15 +293,9 @@ angular.module('app')
           }
           if(message !== null && message !== undefined && message !== ""){
             alert(message);
-            $scope.commodity = {
-              codigo :'',
-              nombre : '',
-              sizeValue:'',
-              sizeUnited:'',
-              scaleUnited:'',
-              taxId:'',
-            }
+            $rootScope.codeNum=$scope.commodity.codigo;
             $state.go('query');
+
           }
 
         }).error(function(err){

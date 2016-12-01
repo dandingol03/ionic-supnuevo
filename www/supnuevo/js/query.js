@@ -1,13 +1,43 @@
    angular.module('app')
-  .controller('queryController',function($scope,$state,$http,$ionicPlatform,locals,rmiPath,$ionicModal,$ionicPopup){
+  .controller('queryController',function($scope,$state,$http,$ionicPlatform,locals,rmiPath,$ionicModal,$ionicPopup,$rootScope){
     $scope.user = {username:locals.get('username',''),supnuevoMerchantId:locals.get('supnuevoMerchantId','')};
     $scope.selectedCode = {codeNum:''};
-    //$scope.updatePrice = new Object();
+
     $scope.goods = {codeNum:''};
     $scope.barCodes = new Array();
     $scope.tax = new Array();
     $scope.sizeArr = new Array();
     $scope.selectedCodeInfo = {priceId:'',price:'',oldPrice:'',priceShow:"",price1:'',nombre:'',codigo:'',iva:'',printType:''};
+
+
+    //
+    // if($rootScope.selectedCodeInfo!=undefined&&$rootScope.selectedCodeInfo!=null){
+    //   $scope.selectedCodeInfo.priceShow = $rootScope.selectedCodeInfo.priceShow;
+    //   $rootScope.selectedCodeInfo.priceShow=null;
+    //
+    //   if($rootScope.selectedCodeInfo.setSizeValue!=undefined&&$rootScope.selectedCodeInfo.setSizeValue!=null
+    //     &&$rootScope.selectedCodeInfo.sizeUnited!=undefined&&$rootScope.selectedCodeInfo.sizeUnited!=null){
+    //
+    //     alert('$rootScope.selectedCodeInfo.setSizeValue='+$rootScope.selectedCodeInfo.setSizeValue);
+    //
+    //     $scope.selectedCodeInfo.goodName=$rootScope.selectedCodeInfo.nombre+','+$rootScope.selectedCodeInfo.setSizeValue
+    //       +','+$rootScope.selectedCodeInfo.sizeUnited;
+    //     alert('$scope.selectedCodeInfo.goodName='+$scope.selectedCodeInfo.goodName);
+    //
+    //     $rootScope.selectedCodeInfo.nombre=null;
+    //
+    //   }else{
+    //     $scope.selectedCodeInfo.goodName = $rootScope.selectedCodeInfo.nombre;
+    //     $rootScope.selectedCodeInfo.nombre=null;
+    //   }
+    //
+    //   $scope.myHTML = $rootScope.selectedCodeInfo.myHTML;
+    //   $rootScope.selectedCodeInfo.myHTML=null;
+    //
+    // }
+
+
+
     $scope.printType = {type1:'0',type2:'0',type3:'0',type4:'0'};
     $scope.taxMark = 0;
     $scope.amount = 0;
@@ -98,6 +128,7 @@
       }
 
     }
+
     $scope.func = function(codeNum){
      // var codigo = $scope.selectedCode[codeNum]
       var supnuevoMerchantId =  $scope.user.supnuevoMerchantId;
@@ -118,7 +149,9 @@
         $scope.myHTML = $scope.myHTML+'<span>'+codeNum.substring(i*5,length)+'</span>';
       }
 
-      $scope.codeNumModal.hide();
+      if($rootScope.codeNum==undefined&&$rootScope.codeNum==null){
+        $scope.codeNumModal.hide();
+      }
       $http({
         method:"post",
         params:{
@@ -137,11 +170,9 @@
         {
           $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre+','+
             $scope.selectedCodeInfo.setSizeValue+','+$scope.selectedCodeInfo.sizeUnit;
-
         }else{
           $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre;
         }
-
 
         var printType = goodInfo["printType"];
         for(var i = 0 ; i < printType.length; i++){
@@ -158,6 +189,17 @@
         alert(err);
       })
     }
+
+
+    //修改和添加的数据同步
+    if($rootScope.codeNum!==undefined&&$rootScope.codeNum!==null)
+    {
+      alert('$rootScope.codeNum='+$rootScope.codeNum);
+      $scope.func($rootScope.codeNum);
+    }
+
+
+
 
     $scope.verify = function(){
      // if(cordova.plugins.Keyboard.isVisible){
@@ -250,9 +292,9 @@
             o.value = sizeArr[i].value;
             $scope.sizeArr.push(o);
           }
-          //alert(JSON.stringify($scope.sizeArr));
-          $state.go("addOrUpdateGoods",{info:JSON.stringify({taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+          $state.go("addOrUpdateGoods",{info:JSON.stringify({taxName:$scope.tax,sizeArr:$scope.sizeArr,myHtml:$scope.myHTML})});
           }
+
         }).error(function(){
 
         })
@@ -292,11 +334,18 @@
             o.value = sizeArr[i].value;
             $scope.sizeArr.push(o);
           }
-      $state.go("addOrUpdateGoods",
-        {info:JSON.stringify({selectedCodeInfo:$scope.selectedCodeInfo,taxName:$scope.tax,sizeArr:$scope.sizeArr})});
+
+          if($scope.selectedCodeInfo.codigo!=undefined&&$scope.selectedCodeInfo.codigo!=null&&$scope.selectedCodeInfo.codigo!=''){
+            $state.go("addOrUpdateGoods",
+              {info:JSON.stringify({selectedCodeInfo:$scope.selectedCodeInfo,taxName:$scope.tax,sizeArr:$scope.sizeArr,myHTML:$scope.myHTML})});
+          }else{
+            alert('请先选择要修改的商品！');
+
+          }
+
+          }
 
 
-        }
       }).error(function(){
 
       })
@@ -468,6 +517,7 @@
       if($scope.selectedCodeInfo.groupId!=null&&$scope.selectedCodeInfo.groupId!=undefined){
         $state.go('changeRelatedPrice',{selectedCodeinfo:JSON.stringify($scope.selectedCodeInfo)});
         $scope.selectedCode.codeNum='';
+        $scope.myHTML='';
         $scope.selectedCodeInfo = {
           priceId: '',
           price: '',

@@ -9,21 +9,6 @@ angular.module('app')
       'password':'',
     }];
 
-  $scope.goto = function(){
-    $state.go('addOrUpdateGoods');
-  }
-
-
-
-
-
-  $scope.myHTML = $scope.myHTML+'<span>111</span>';
-
-  $scope.clean = function(){
-    $scope.myHTML='';
-  }
-
-
 
     $scope.username=new Object();
     $scope.password= new Object();
