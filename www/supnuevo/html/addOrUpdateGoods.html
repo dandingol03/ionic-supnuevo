@@ -27,13 +27,15 @@
     </label>
     <label class="item item-input">
       <span class="input-label" >商品含量</span>
-      <input type="text" ng-value="selectedCodeInfo.setSizeValue" ng-model="commodity.setSizeValue">
+      <input type="text" ng-value="selectedCodeInfo.setSizeValue" ng-model="commodity.sizeValue">
     </label>
 
     <label class="item item-input" >
-      <span class="input-label" style="width:35%;">含量单位</span>
-
-      <select ng-model="commodity.sizeUnited" ng-options="index.value as index.label for index  in sizeUnit" ng-change="changeSizeUnit()">
+      <span class="input-label" style="width:35%;">含量单位:</span>
+      <select ng-model="commodity.sizeUnited"
+              ng-selected="index.value==commodity.sizeUnited"
+              ng-options="index.value as index.label for index  in sizeUnit"
+              ng-change="changeSizeUnit()">
         <option value="">请选择...</option>
       </select>
     </label>
@@ -41,14 +43,16 @@
 
     <label class="item item-input">
       <span class="input-label" >比价单位</span>
-      <select ng-model="commodity.scaleUnited" ng-options="scale.label as scale.value for scale in scaleUnit">
+      <select ng-model="commodity.scaleUnited"
+              ng-selected="index.lable==commodity.scaleUnited"
+              ng-options="scale.label as scale.value for scale in scaleUnit">
         <option value="">请选择...</option>
       </select>
     </label>
 
     <label class="item item-input">
       <span class="input-label" >商品税类</span>
-      <select ng-model="commodity.taxId" ng-options="index.value as index.label for index in commodityTax">
+      <select ng-model="ob.selectedTax"  ng-options="index.label for index in commodityTax" ng-change="taxChange()">
         <option value="">请选择...</option>
       </select>
     </label>

@@ -86,8 +86,9 @@ angular.module('app',['ionic','ui.router','ngCordova','locals'])
 
  // .constant("rmiPath","http://142.4.194.0:8080/supnuevo")
 
- .constant("rmiPath","http://142.4.194.0:8080/")
+.constant("rmiPath","http://142.4.194.0:8080/")
 
+//.constant("rmiPath","http:/202.194.16.175:8080/supnuevo")
  //.constant("rmiPath","/proxy/local")
 //.constant("rmiPath","http://192.168.1.102:8080/supnuevo")
 

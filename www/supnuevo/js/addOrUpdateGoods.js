@@ -2,93 +2,15 @@
  * Created by yiming on 16/11/9.
  */
 angular.module('app')
-  .controller('addOrUpdateGoodsController',function($scope,$rootScope,$state,locals,$http,$stateParams,rmiPath,$ionicModal){
+  .controller('addOrUpdateGoodsController',function($scope,$rootScope,$state,locals,$http,$stateParams,rmiPath){
 
-    $scope.commodity = {
-      username:locals.get('username',''),
-      codigo :'',
-      nombre : '',
-      sizeValue:'',
-      sizeUnited:'',
-      scaleUnited:'',
-      taxId:'',
-    }
     $scope.commodityTax = new Array();
     $scope.sizeUnit = new Array();
     $scope.scaleUnit = new Array();
 
 
-    if($stateParams.info!==undefined&&$stateParams.info!==null)
-    {
-      $scope.info=$stateParams.info;
-      if(Object.prototype.toString.call($stateParams.info)=='[object String]')
-        $scope.info=JSON.parse($scope.info);
-    }
-
-    if($scope.info.selectedCodeInfo!==undefined&&$scope.info.selectedCodeInfo!=null){
-      $scope.selectedCodeInfo=$scope.info.selectedCodeInfo;
-      if($scope.selectedCodeInfo.setSizeValue!=undefined&&$scope.selectedCodeInfo.setSizeValue!=null
-        &&$scope.selectedCodeInfo.sizeUnit!=undefined&&$scope.selectedCodeInfo.sizeUnit!=null)
-      {
-        $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre+','+
-          $scope.selectedCodeInfo.setSizeValue+','+$scope.selectedCodeInfo.sizeUnit;
-      }else{
-        $scope.selectedCodeInfo.goodName=$scope.selectedCodeInfo.nombre;
-      }
-
-    }
-
-    if($scope.info.myHTML!==undefined&&$scope.info.myHTML!==null){
-       $scope.myHTML=$scope.info.myHTML;
-    }
-
-    if($scope.info.taxName!==undefined&&$scope.info.taxName!=null) {
-      $scope.tax = $scope.info.taxName;
-
-      if ($scope.info.sizeArr !== undefined && $scope.info.sizeArr != null) {
-        $scope.sizeArr = $scope.info.sizeArr;
-      }
-
-      var tax = $scope.tax;
-      var sizeArrJSON = $scope.sizeArr;
-      for (var i = 0; i < tax.length; i++) {
-        $scope.commodityTax.push(tax[i]);
-      }
-      for (var i = 0; i < sizeArrJSON.length; i++) {
-        $scope.sizeUnit.push(sizeArrJSON[i]);
-      }
-    }
-
-    $scope.goBack = function(){
-
-      if($scope.selectedCodeInfo!=undefined&&$scope.selectedCodeInfo!=null){
-
-        $rootScope.codeNum=$scope.selectedCodeInfo.codigo;
-      }
-
-      $state.go("query");
-    }
-
-    /*** select sizeUnit modal ***/
-    $ionicModal.fromTemplateUrl('supnuevo/html/sizeUnit_modal.html',{
-      scope:  $scope,
-      animation: 'animated '+'bounceInUp',
-      hideDelay:920
-    }).then(function(modal) {
-      $scope.sizeUnit_modal = modal;
-    });
-
-    $scope.open_sizeUnitModal= function(){
-      $scope.sizeUnit_modal.show();
-    };
-
-    $scope.close_sizeUnitModal= function() {
-      $scope.sizeUnit_modal.hide();
-    };
-    /*** select sizeUnit modal ***/
-
-
     $scope.changeSizeUnit = function(){
+
       $scope.scaleUnit = [];
       var val = $scope.commodity.sizeUnited;
       if(val !== null && val !== undefined && val !== ""){
@@ -114,8 +36,108 @@ angular.module('app')
           alert(err.toString());
         })
       }
+    }
+
+
+
+    if($stateParams.info!==undefined&&$stateParams.info!==null)
+    {
+      $scope.info=$stateParams.info;
+      if(Object.prototype.toString.call($stateParams.info)=='[object String]')
+        $scope.info=JSON.parse($scope.info);
+    }
+
+    if($scope.info.selectedCodeInfo!==undefined&&$scope.info.selectedCodeInfo!=null){
+      $scope.selectedCodeInfo=$scope.info.selectedCodeInfo;
+      $scope.commodity = {
+        username:locals.get('username',''),
+        codigo :'',
+        nombre : '',
+        sizeValue:'',
+        sizeUnited: '',
+        scaleUnited:'',
+        taxId:'',
+      }
+
+      $scope.commodity.nombre = $scope.selectedCodeInfo.nombre;
+      $scope.commodity.sizeValue = $scope.selectedCodeInfo.setSizeValue;
+      $scope.commodity.sizeUnited = $scope.selectedCodeInfo.sizeUnit;
+      $scope.commodity.scaleUnited = $scope.selectedCodeInfo.scaleUnit;
+      $scope.commodity.taxId = $scope.selectedCodeInfo.taxId;
+
+      $scope.changeSizeUnit();
+
+    }else{
+      $scope.commodity = {
+        username:locals.get('username',''),
+        codigo :'',
+        nombre : '',
+        sizeValue:'',
+        sizeUnited:'',
+        scaleUnited:'',
+        taxId:'',
+      }
 
     }
+
+    if($scope.info.myHTML!==undefined&&$scope.info.myHTML!==null){
+       $scope.myHTML=$scope.info.myHTML;
+    }
+
+    if($scope.info.taxName!==undefined&&$scope.info.taxName!=null) {
+      $scope.tax = $scope.info.taxName;
+
+      if ($scope.info.sizeArr !== undefined && $scope.info.sizeArr != null) {
+        $scope.sizeArr = $scope.info.sizeArr;
+      }
+
+      var tax = $scope.tax;
+      var sizeArrJSON = $scope.sizeArr;
+      for (var i = 0; i < tax.length; i++) {
+        $scope.commodityTax.push(tax[i]);
+      }
+      for (var i = 0; i < sizeArrJSON.length; i++) {
+        $scope.sizeUnit.push(sizeArrJSON[i]);
+      }
+    }
+
+
+    $scope.ob={};
+
+    if($scope.commodityTax.length>0)
+    {
+      if($scope.commodity.taxId=='')
+      {
+        $scope.ob.selectedTax=$scope.commodityTax[0];
+      }else{
+        $scope.commodityTax.map(function(tax,i) {
+          if(tax.value==$scope.commodity.taxId){
+            $scope.ob.selectedTax=$scope.commodityTax[i];
+            $scope.commodity.taxId = $scope.ob.selectedTax.value;
+
+          }
+
+        })
+      }
+    }
+
+
+    $scope.taxChange=function () {
+      $scope.commodity.taxId=$scope.ob.selectedTax.value;
+    }
+
+
+    $scope.goBack = function(){
+
+      if($scope.info.selectedCodeInfo!==undefined&&$scope.info.selectedCodeInfo!=null){
+        $rootScope.codeNum=$scope.selectedCodeInfo.codigo;
+        $state.go("query");
+      }else{
+        $state.go("query");
+      }
+
+    }
+
     $scope.changeScaleUnit = function(){
 
     }
@@ -124,20 +146,15 @@ angular.module('app')
     }
 
 
+
     $scope.addSupnuevoCommonCommodity = function(){
 
       //修改信息
       if($scope.selectedCodeInfo!=undefined&&$scope.selectedCodeInfo!=null){
         var codigo = $scope.selectedCodeInfo.codigo;
         var taxId = $scope.commodity.taxId;
-        if($scope.commodity.nombre==undefined||$scope.commodity.nombre==null||$scope.commodity.nombre==''){
-          $scope.commodity.nombre=$scope.selectedCodeInfo.nombre;
-        }
         var nombre = $scope.commodity.nombre;
-        if($scope.commodity.setSizeValue==undefined||$scope.commodity.setSizeValue==null||$scope.commodity.nombre==''){
-          $scope.commodity.setSizeValue=$scope.selectedCodeInfo.setSizeValue;
-        }
-        var sizeValue = $scope.commodity.setSizeValue;
+        var sizeValue = $scope.commodity.sizeValue;
         var sizeUnited = $scope.commodity.sizeUnited;
         var scaleUnited = $scope.commodity.scaleUnited;
         var supnuevoMerchantId = locals.get('supnuevoMerchantId','');
@@ -215,14 +232,8 @@ angular.module('app')
       else{
         var codigo = $scope.commodity.codigo;
         var taxId = $scope.commodity.taxId;
-        if($scope.commodity.nombre==undefined||$scope.commodity.nombre==null||$scope.commodity.nombre==''){
-          $scope.commodity.nombre=$scope.selectedCodeInfo.nombre;
-        }
         var nombre = $scope.commodity.nombre;
-        if($scope.commodity.setSizeValue==undefined||$scope.commodity.setSizeValue==null||$scope.commodity.nombre==''){
-          $scope.commodity.setSizeValue=$scope.selectedCodeInfo.setSizeValue;
-        }
-        var sizeValue = $scope.commodity.setSizeValue;
+        var sizeValue = $scope.commodity.sizeValue;
         var sizeUnited = $scope.commodity.sizeUnited;
         var scaleUnited = $scope.commodity.scaleUnited;
         var supnuevoMerchantId = locals.get('supnuevoMerchantId','');
@@ -295,7 +306,6 @@ angular.module('app')
             alert(message);
             $rootScope.codeNum=$scope.commodity.codigo;
             $state.go('query');
-
           }
 
         }).error(function(err){
