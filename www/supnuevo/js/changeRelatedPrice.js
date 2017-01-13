@@ -5,15 +5,10 @@ angular.module('app')
   .controller('changeRelatedPriceController',function($scope,$state,$http,$ionicPlatform,locals,
                                                       rmiPath,$stateParams,$rootScope,$location){
 
-    $scope.groupGoods=[
-      {code:'0001',name:'商品1',checked:true},{code:'0002',name:'商品2',checked:true},
-      {code:'0003',name:'商品3',checked:true},{code:'0004',name:'商品4',checked:true}
-      ];
-
-
     $scope.relatedGoods=[];//从服务器传来的相关产品列表
 
     $scope.item=$stateParams.selectedCodeinfo;
+   // alert('$scope.item'+$scope.item);
 
     if(Object.prototype.toString.call($scope.item)=='[object String]')
       $scope.item=JSON.parse($scope.item);
@@ -73,7 +68,6 @@ angular.module('app')
 
     $scope.changePriceRelated = function(){
 
-      //$scope.relatedGoods.push($scope.item)
       var selectedRelativePriceIds=[];
       $scope.relatedGoods.map(function(good,i) {
         if(good.checked==true){
@@ -81,6 +75,7 @@ angular.module('app')
         }
       })
 
+     // alert('$scope.item.printType'+$scope.item.printType);
       $http({
         method:"post",
         params:{

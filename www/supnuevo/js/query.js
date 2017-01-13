@@ -471,10 +471,6 @@
             $scope.selectedCode={codeNum:'',codeNum1:'',codeNum2:'',codeNum3:''};
             $scope.myHTML='';
 
-            // $scope.code.map(function(subString,i) {
-            //   subString='';
-            // })
-
             $scope.selectedCodeInfo = {
               priceId: '',
               price: '',
@@ -546,6 +542,13 @@
 
     $scope.changePriceRelated = function(){
 
+      var type1 = $scope.printType.type1;
+      var type2 = $scope.printType.type2;
+      var type3 = $scope.printType.type3;
+      var type4 = $scope.printType.type4;
+      $scope.selectedCodeInfo.printType = type1 + type2 + type3 + type4;
+
+     // alert('printType='+$scope.selectedCodeInfo.printType);
       if($scope.selectedCodeInfo.groupId!=null&&$scope.selectedCodeInfo.groupId!=undefined){
         $state.go('changeRelatedPrice',{selectedCodeinfo:JSON.stringify($scope.selectedCodeInfo)});
         $scope.selectedCode.codeNum='';
